@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Vantage
+Comment=View the world throughout history
+Icon=vantage
+Exec=vantage
+Terminal=false
+Categories=Education;History;Geography
