@@ -1,3 +1,8 @@
+/*
+   FOR TESTING GTK3
+   RUN WITH `make uitest`
+*/
+
 #include <gtk/gtk.h>
 
 static void btn_msg(GtkWidget *widget, gpointer data)

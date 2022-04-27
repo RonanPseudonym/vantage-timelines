@@ -1,6 +1,7 @@
 X  Get gtk4 set up and building with c++
 X  Set up makefile
 X  Run gtk window
+X  Make custom draw widget
 -  Read from shapefile
 -  Create map widget
 -  Create ui for app

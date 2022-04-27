@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "ui.h"
 
 /* static void btn_msg(GtkWidget *widget, gpointer data)
 {
@@ -50,7 +51,6 @@ static void activate(GtkApplication* app, gpointer user_data) {
 
     /* button_box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
     gtk_container_add(GTK_CONTAINER(window), button_box);
-
     button = gtk_button_new_with_label("Click Me!");
     g_signal_connect(button, "clicked", G_CALLBACK(btn_msg), NULL);
     // g_signal_connect_swapped(button, "clicked", G_CALLBACK(gtk_widget_destroy), window);
@@ -90,7 +90,7 @@ static void activate(GtkApplication* app, gpointer user_data) {
     gtk_widget_show_all(window);
 }
 
-int main(int argc, char *argv[]) {
+int ui_init(int argc, char *argv[]) {
     GtkApplication *app;
     int status;
 

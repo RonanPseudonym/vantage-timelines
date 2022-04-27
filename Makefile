@@ -1,5 +1,5 @@
-FILES   = src/ui/ui.c src/ui/viewer.c
-HEADERS = src/ui/viewer.h
+FILES   = src/ui/ui.c src/ui/viewer.c src/main.c
+HEADERS = src/ui/viewer.h src/ui/ui.h
 FLAGS   =
 CC      = gcc
 NAME    = vantage
@@ -12,11 +12,11 @@ UITESTN = ui_test
 PATHVAR = /usr/local/bin/
 APPLOC  = ~/.local/share/applications/
 
-build: Makefile $(HEADERS) $(CPP)
+build: $(HEADERS) $(FILES)
 	[ -d build ] || mkdir -p build
 #	$(CC) $$( pkg-config --cflags $(GTK_MIN) ) -o build/$(NAME) $(CPP) $$( pkg-config --libs $(GTK_MIN) )
 
-	$(CC) $(FLAGS) $(CPP) $(HEADERS) -o build/$(NAME) \
+	$(CC) $(FLAGS) $(FILES) -o build/$(NAME) \
 		`pkg-config --cflags --libs gtk+-$(GTK_MIN)`
 		--std=c++$(TARGET)
 	
