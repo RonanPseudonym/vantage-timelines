@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include "ui.h"
+#include "viewer.h"
 
 /* static void btn_msg(GtkWidget *widget, gpointer data)
 {
@@ -33,6 +34,10 @@ static void activate(GtkApplication* app, gpointer user_data) {
     // ===
 
     GtkWidget *slider;
+
+    // ===
+
+    GtkWidget *shpviewer;
 
     // ====================
 
@@ -86,6 +91,16 @@ static void activate(GtkApplication* app, gpointer user_data) {
     gtk_range_set_value(GTK_RANGE(slider), 2022); // TODO: Same as todo above
 
     // ====================
+
+    shpviewer = gtk_drawing_area_new();
+    gtk_grid_attach(GTK_GRID(grid), shpviewer, 2, 0, 1, 1);
+    
+    gtk_widget_set_hexpand(shpviewer, TRUE);
+    gtk_widget_set_vexpand(shpviewer, TRUE);
+    
+    gtk_widget_set_size_request(shpviewer, 400, 250);
+
+    g_signal_connect(G_OBJECT(shpviewer), "draw", G_CALLBACK(viewer_callback), NULL);
 
     gtk_widget_show_all(window);
 }

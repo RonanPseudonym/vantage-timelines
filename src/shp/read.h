@@ -4,4 +4,4 @@
  C'MON
 */
 
-void read(char dir[]);
+void shp_read(char *dir[]);

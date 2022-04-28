@@ -28,7 +28,7 @@ struct _Point {
 struct _MultiPoint {
     double box[4];
     int    num_points;
-    Point  points[]; // num_points VLA
+    void*  points; // num_points VLA : Point[]
 };
 
 struct _PolyLine {
@@ -36,7 +36,7 @@ struct _PolyLine {
     int    num_parts;
     int    num_points;
     void*  parts;  // num_parts VLA : int[]
-    void*  points[]; // num_points VLA : Point[]
+    void*  points; // num_points VLA : Point[]
 };
 
 struct _Polygon {
