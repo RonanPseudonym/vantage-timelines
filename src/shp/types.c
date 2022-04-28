@@ -8,59 +8,59 @@
 #include "types.h"
 #include <stdlib.h>
 
-Point* NEW_POINT() {
-    static Point x = {0, 0};
-    return &x;
+Point NEW_POINT() {
+    Point x = {0, 0};
+    return x;
 }
 
-MultiPoint* NEW_MULTIPOINT(int num_points) {
-    static MultiPoint x = {{0.0, 0.0, 0.0, 0.0}, -1, NULL};
+MultiPoint NEW_MULTIPOINT(int num_points) {
+    MultiPoint x = {{0.0, 0.0, 0.0, 0.0}, -1, NULL};
 
     x.num_points = num_points;
     x.points     = malloc(sizeof(Point) * num_points);
 
-    return &x;
+    return x;
 }
 
-PolyLine* NEW_POLYLINE(int num_parts, int num_points) {
-    static PolyLine x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL};
+PolyLine NEW_POLYLINE(int num_parts, int num_points) {
+    PolyLine x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL};
 
     x.num_parts  = num_parts;
     x.num_points = num_points;
     x.parts      = malloc(sizeof(int)   * num_parts);
     x.points     = malloc(sizeof(Point) * num_points);
 
-    return &x;
+    return x;
 }
 
-Polygon* NEW_POLYGON(int num_parts, int num_points) {
-    static Polygon x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL};
+Polygon NEW_POLYGON(int num_parts, int num_points) {
+    Polygon x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL};
 
     x.num_parts  = num_parts;
     x.num_points = num_points;
     x.parts      = malloc(sizeof(int)   * num_parts);
     x.points     = malloc(sizeof(Point) * num_points);
 
-    return &x;
+    return x;
 }
 
-PointM* NEW_POINTM() {
-    static PointM x = {0.0, 0.0, 0.0};
-    return &x;
+PointM NEW_POINTM() {
+    PointM x = {0.0, 0.0, 0.0};
+    return x;
 }
 
-MultiPointM* NEW_MULTIPOINTM(int num_points) {
-    static MultiPointM x = {{0.0, 0.0, 0.0, 0.0}, -1, NULL, {0.0, 0.0}, NULL};
+MultiPointM NEW_MULTIPOINTM(int num_points) {
+    MultiPointM x = {{0.0, 0.0, 0.0, 0.0}, -1, NULL, {0.0, 0.0}, NULL};
 
     x.num_points = num_points;
     x.points     = malloc(sizeof(PointM) * num_points);
     x.m_array    = malloc(sizeof(double) * num_points);
 
-    return &x;
+    return x;
 }
 
-PolyLineM* NEW_POLYLINEM(int num_parts, int num_points) {
-    static PolyLineM x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, {0.0, 0.0}, NULL};
+PolyLineM NEW_POLYLINEM(int num_parts, int num_points) {
+    PolyLineM x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, {0.0, 0.0}, NULL};
 
     x.num_parts  = num_parts;
     x.num_points = num_points;
@@ -68,11 +68,11 @@ PolyLineM* NEW_POLYLINEM(int num_parts, int num_points) {
     x.points     = malloc(sizeof(PointM) * num_points);
     x.m_array    = malloc(sizeof(double) * num_points);
 
-    return &x;
+    return x;
 }
 
-PolygonM* NEW_POLYGONM(int num_parts, int num_points) {
-    static PolygonM x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, {0.0, 0.0}, NULL};
+PolygonM NEW_POLYGONM(int num_parts, int num_points) {
+    PolygonM x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, {0.0, 0.0}, NULL};
 
     x.num_parts  = num_parts;
     x.num_points = num_points;
@@ -80,40 +80,27 @@ PolygonM* NEW_POLYGONM(int num_parts, int num_points) {
     x.points     = malloc(sizeof(PointM) * num_points);
     x.m_array    = malloc(sizeof(double) * num_points);
 
-    return &x;
+    return x;
 }
 
-PointZ* NEW_POINTZ() {
-    static PointZ x = {0.0, 0.0, 0.0, 0.0};
-    return &x;
+PointZ NEW_POINTZ() {
+    PointZ x = {0.0, 0.0, 0.0, 0.0};
+    return x;
 }
 
-MultiPointZ* NEW_MULTIPOINTZ(int num_points) {
-    static MultiPointZ x = {{0.0, 0.0, 0.0, 0.0}, -1, NULL, {0.0, 0.0}, NULL, {0.0, 0.0}, NULL};
+MultiPointZ NEW_MULTIPOINTZ(int num_points) {
+    MultiPointZ x = {{0.0, 0.0, 0.0, 0.0}, -1, NULL, {0.0, 0.0}, NULL, {0.0, 0.0}, NULL};
 
     x.num_points = num_points;
     x.points     = malloc(sizeof(PointZ) * num_points);
     x.z_array    = malloc(sizeof(double) * num_points);
     x.m_array    = malloc(sizeof(double) * num_points);
 
-    return &x;
+    return x;
 }
 
-PolyLineZ* NEW_POLYLINEZ(int num_parts, int num_points) {
-    static PolyLineZ x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, {0.0, 0.0}, NULL, {0.0, 0.0}, NULL};
-
-    x.num_parts  = num_parts;
-    x.num_points = num_points;
-    x.parts      = malloc(sizeof(int)    * num_parts);
-    x.points     = malloc(sizeof(PointZ) * num_points);
-    x.z_array    = malloc(sizeof(double) * num_points);
-    x.m_array    = malloc(sizeof(double) * num_points);
-
-    return &x;
-}
-
-PolygonZ* NEW_POLYGONZ(int num_parts, int num_points) {
-    static PolygonZ x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, {0.0, 0.0}, NULL, {0.0, 0.0}, NULL};
+PolyLineZ NEW_POLYLINEZ(int num_parts, int num_points) {
+    PolyLineZ x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, {0.0, 0.0}, NULL, {0.0, 0.0}, NULL};
 
     x.num_parts  = num_parts;
     x.num_points = num_points;
@@ -122,11 +109,24 @@ PolygonZ* NEW_POLYGONZ(int num_parts, int num_points) {
     x.z_array    = malloc(sizeof(double) * num_points);
     x.m_array    = malloc(sizeof(double) * num_points);
 
-    return &x;
+    return x;
 }
 
-MultiPatch* NEW_MULTIPATCH(int num_parts, int num_points) {
-    static MultiPatch x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, NULL, {0.0, 0.0}, NULL, {0.0, 0.0}, NULL};
+PolygonZ NEW_POLYGONZ(int num_parts, int num_points) {
+    PolygonZ x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, {0.0, 0.0}, NULL, {0.0, 0.0}, NULL};
+
+    x.num_parts  = num_parts;
+    x.num_points = num_points;
+    x.parts      = malloc(sizeof(int)    * num_parts);
+    x.points     = malloc(sizeof(PointZ) * num_points);
+    x.z_array    = malloc(sizeof(double) * num_points);
+    x.m_array    = malloc(sizeof(double) * num_points);
+
+    return x;
+}
+
+MultiPatch NEW_MULTIPATCH(int num_parts, int num_points) {
+    MultiPatch x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL, NULL, {0.0, 0.0}, NULL, {0.0, 0.0}, NULL};
 
     x.num_parts  = num_parts;
     x.num_points = num_points;
@@ -136,5 +136,5 @@ MultiPatch* NEW_MULTIPATCH(int num_parts, int num_points) {
     x.z_array    = malloc(sizeof(double) * num_points);
     x.m_array    = malloc(sizeof(double) * num_points);
 
-    return &x;
+    return x;
 }
