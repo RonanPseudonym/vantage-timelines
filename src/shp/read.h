@@ -4,4 +4,7 @@
  C'MON
 */
 
-void shp_read(char *dir[]);
+#ifndef SHP_READ
+#define SHP_READ
+void shp_read(char* dir);
+#endif
