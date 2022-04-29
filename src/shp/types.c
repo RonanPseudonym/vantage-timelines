@@ -138,3 +138,8 @@ MultiPatch NEW_MULTIPATCH(int num_parts, int num_points) {
 
     return x;
 }
+
+ShpHeader NEW_SHPHEADER() {
+    ShpHeader x = {0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    return x;
+}

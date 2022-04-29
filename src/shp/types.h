@@ -20,6 +20,8 @@ typedef struct _PolyLineZ PolyLineZ;
 typedef struct _PolygonZ PolygonZ;
 typedef struct _MultiPatch MultiPatch;
 
+typedef struct _ShpHeader ShpHeader;
+
 struct _Point {
     double x;
     double y;
@@ -135,6 +137,20 @@ struct _MultiPatch {
     void*  m_array;    // num_points VLA : double[]
 };
 
+struct _ShpHeader {
+    int file_length;
+    int version;
+    int shape_type;
+    double x_min;
+    double y_min;
+    double x_max;
+    double y_max;
+    double z_min;
+    double z_max;
+    double m_min;
+    double m_max;
+};
+
 Point       NEW_POINT       ();
 MultiPoint  NEW_MULTIPOINT  (int num_points);
 PolyLine    NEW_POLYLINE    (int num_parts, int num_points);
@@ -148,5 +164,7 @@ MultiPointZ NEW_MULTIPOINTZ (int num_points);
 PolyLineZ   NEW_POLYLINEZ   (int num_parts, int num_points);
 PolygonZ    NEW_POLYGONZ    (int num_parts, int num_points);
 MultiPatch  NEW_MULTIPATCH  (int num_parts, int num_points);
+
+ShpHeader   NEW_SHPHEADER   ();
 
 #endif
