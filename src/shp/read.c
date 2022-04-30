@@ -48,7 +48,7 @@ void shp_read(char* dir) {
                 byte_counter += 4;
                 continue;
             case 24: // File length
-                header.file_length = I_INT_LITTLE_ENDIAN();
+                header.file_length = I_INT_BIG_ENDIAN();
                 byte_counter += 4;
                 continue;
             case 32: // Shape type
@@ -94,20 +94,31 @@ void shp_read(char* dir) {
             printf("Header:\n");
             printf("  File length: %d\n", header.file_length);
             printf("  Shape type: %d\n", header.shape_type);
-            printf("  Bounding box x_min: %d\n", header.x_min);
-            printf("  Bounding box y_min: %d\n", header.y_min);
-            printf("  Bounding box x_max: %d\n", header.x_max);
-            printf("  Bounding box y_max: %d\n", header.y_max);
-            printf("  Bounding box z_min: %d\n", header.z_min);
-            printf("  Bounding box z_max: %d\n", header.z_max);
-            printf("  Bounding box m_min: %d\n", header.m_min);
-            printf("  Bounding box m_max: %d\n", header.m_max);
+            printf("  Bounding box x_min: %lf\n", header.x_min);
+            printf("  Bounding box y_min: %lf\n", header.y_min);
+            printf("  Bounding box x_max: %lf\n", header.x_max);
+            printf("  Bounding box y_max: %lf\n", header.y_max);
+            printf("  Bounding box z_min: %lf\n", header.z_min);
+            printf("  Bounding box z_max: %lf\n", header.z_max);
+            printf("  Bounding box m_min: %lf\n", header.m_min);
+            printf("  Bounding box m_max: %lf\n", header.m_max);
             printf("\n");
             break;
         }
 
         I_INT_LITTLE_ENDIAN();
         byte_counter += 4;
+    }
+
+    for (;;) {
+        int shape_type = I_INT_LITTLE_ENDIAN();
+        byte_counter += 4;
+
+        switch (shape_type) {
+            case 5: {// Polygon
+                printf("Polygon\n");
+            }
+        }
     }
 
     #undef I_INT_LITTLE_ENDIAN
