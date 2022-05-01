@@ -116,7 +116,61 @@ void shp_read(char* dir) {
 
         switch (shape_type) {
             case 5: {// Polygon
-                printf("Polygon\n");
+                double box[4];
+                for (int i = 0; i < 4; i ++) {
+                    box[i] = I_DOUBLE_LITTLE_ENDIAN();
+                    byte_counter += 8;
+                }
+
+                int num_parts = I_INT_LITTLE_ENDIAN();
+                byte_counter += 4;
+
+                int num_points = I_INT_LITTLE_ENDIAN();
+                byte_counter += 4;
+
+                Polygon *polygon = NEW_POLYGON(num_parts, num_points);
+
+                polygon->box[0] = box[0];
+                polygon->box[1] = box[1];
+                polygon->box[2] = box[2];
+                polygon->box[3] = box[3];
+
+                for (int i = 0; i < num_parts; i ++) {
+                    ((int*)polygon->parts)[i] = I_INT_LITTLE_ENDIAN();
+                    byte_counter += 4;
+                }
+
+                for (int i = 0; i < num_points; i ++) {
+                    ((Point*)polygon->points)[i] = NEW_POINT();
+                    double x = I_DOUBLE_LITTLE_ENDIAN();
+                    ((Point*)polygon->points)[i].x = x;
+                    byte_counter += 8;
+                    ((Point*)polygon->points)[i].y = I_DOUBLE_LITTLE_ENDIAN();
+                    byte_counter += 8;
+                }
+
+                printf("\n");
+                printf("Polygon:\n");
+                printf("  Box: %lf, %lf, %lf, %lf\n", polygon->box[0], polygon->box[1], polygon->box[2], polygon->box[3]);
+                printf("  Num parts: %d\n", polygon->num_parts);
+                printf("  Num points: %d\n", polygon->num_points);
+                /* printf("  Parts: ");
+                for (int i = 0; i < num_parts; i ++) {
+                    printf("%d ", ((int*)polygon->parts)[i]);
+                }
+                printf("\n");
+                printf("  Points: ");
+                for (int i = 0; i < num_points; i ++) {
+                   printf("(%lf, %lf) ", ((Point*)polygon->points)[i].x, ((Point*)polygon->points)[i].y);
+                }
+                */
+
+                // sizeof(polygon) returning 8 no matter what, pretty funky if you ask me
+                // but, uh, it seems to work? so fuck it i'm living *my* life i'll let it live its
+
+                free(polygon);
+
+                break;
             }
         }
     }

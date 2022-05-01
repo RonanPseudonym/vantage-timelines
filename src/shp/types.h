@@ -151,19 +151,19 @@ struct _ShpHeader {
     double m_max;
 };
 
-Point       NEW_POINT       ();
-MultiPoint  NEW_MULTIPOINT  (int num_points);
-PolyLine    NEW_POLYLINE    (int num_parts, int num_points);
-Polygon     NEW_POLYGON     (int num_parts, int num_points);
-PointM      NEW_POINTM      ();
-MultiPointM NEW_MULTIPOINTM (int num_points);
-PolyLineM   NEW_POLYLINEM   (int num_parts, int num_points);
-PolygonM    NEW_POLYGONM    (int num_parts, int num_points);
-PointZ      NEW_POINTZ      ();
-MultiPointZ NEW_MULTIPOINTZ (int num_points);
-PolyLineZ   NEW_POLYLINEZ   (int num_parts, int num_points);
-PolygonZ    NEW_POLYGONZ    (int num_parts, int num_points);
-MultiPatch  NEW_MULTIPATCH  (int num_parts, int num_points);
+Point*       NEW_POINT       ();
+MultiPoint*  NEW_MULTIPOINT  (int num_points);
+PolyLine*    NEW_POLYLINE    (int num_parts, int num_points);
+Polygon*     NEW_POLYGON     (int num_parts, int num_points);
+PointM*      NEW_POINTM      ();
+MultiPointM* NEW_MULTIPOINTM (int num_points);
+PolyLineM*   NEW_POLYLINEM   (int num_parts, int num_points);
+PolygonM*    NEW_POLYGONM    (int num_parts, int num_points);
+PointZ*      NEW_POINTZ      ();
+MultiPointZ* NEW_MULTIPOINTZ (int num_points);
+PolyLineZ*   NEW_POLYLINEZ   (int num_parts, int num_points);
+PolygonZ*    NEW_POLYGONZ    (int num_parts, int num_points);
+MultiPatch*  NEW_MULTIPATCH  (int num_parts, int num_points);
 
 ShpHeader   NEW_SHPHEADER   ();
 

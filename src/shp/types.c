@@ -7,12 +7,14 @@
 
 #include "types.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 Point NEW_POINT() {
     Point x = {0, 0};
     return x;
 }
 
+/*
 MultiPoint NEW_MULTIPOINT(int num_points) {
     MultiPoint x = {{0.0, 0.0, 0.0, 0.0}, -1, NULL};
 
@@ -32,18 +34,17 @@ PolyLine NEW_POLYLINE(int num_parts, int num_points) {
 
     return x;
 }
-
-Polygon NEW_POLYGON(int num_parts, int num_points) {
-    Polygon x = {{0.0, 0.0, 0.0, 0.0}, -1, -1, NULL, NULL};
-
-    x.num_parts  = num_parts;
-    x.num_points = num_points;
-    x.parts      = malloc(sizeof(int)   * num_parts);
-    x.points     = malloc(sizeof(Point) * num_points);
+*/
+Polygon* NEW_POLYGON(int num_parts, int num_points) {
+    Polygon *x = malloc(sizeof(int) * 2 + sizeof(Point) * num_points + sizeof(int) * num_parts + sizeof(double) * 4);
+    x->num_parts  = num_parts;
+    x->num_points = num_points;
+    x->parts      = malloc(sizeof(int)   * num_parts);
+    x->points     = malloc(sizeof(Point) * num_points);
 
     return x;
 }
-
+/*
 PointM NEW_POINTM() {
     PointM x = {0.0, 0.0, 0.0};
     return x;
@@ -141,6 +142,5 @@ MultiPatch NEW_MULTIPATCH(int num_parts, int num_points) {
 
 ShpHeader NEW_SHPHEADER() {
     ShpHeader x = {0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    printf("%d %d", x.file_length, x.x_min);
     return x;
-}
+}*/
