@@ -8,8 +8,9 @@
 
 #include "read.h"
 #include "types.h"
+#include "../utils/vector.h"
 
-void shp_read(char* dir) {
+Vector *shp_read(char* dir) {
     char* shp = malloc(strlen(dir) + strlen("/World_Countries.shp"));
 
     strcpy(shp, dir);
@@ -19,7 +20,6 @@ void shp_read(char* dir) {
     FILE* fp = fopen(shp, "rb");
     if (fp == NULL) {
         fprintf(stderr, "Error opening file %s\n", shp);
-        return;
     }
 
     unsigned int byte_counter = 0;
@@ -43,7 +43,6 @@ void shp_read(char* dir) {
                 int sig = I_INT_BIG_ENDIAN();
                 if (sig != SHP_SIGNATURE) {
                     fprintf(stderr, "Error: Invalid signature %d[provided]!=%d[requested]\n", sig, SHP_SIGNATURE);
-                    return;
                 }
                 byte_counter += 4;
                 continue;
@@ -110,6 +109,8 @@ void shp_read(char* dir) {
         byte_counter += 4;
     }
 
+    Vector* shapes = VECTOR_NEW();
+
     for (;;) {
         int shape_type = I_INT_LITTLE_ENDIAN();
         byte_counter += 4;
@@ -168,15 +169,19 @@ void shp_read(char* dir) {
                 // sizeof(polygon) returning 8 no matter what, pretty funky if you ask me
                 // but, uh, it seems to work? so fuck it i'm living *my* life i'll let it live its
 
-                free(polygon);
+                vector_push(shapes, polygon);
 
                 break;
             }
         }
-    }
 
-    #undef I_INT_LITTLE_ENDIAN
-    #undef I_DOUBLE_LITTLE_ENDIAN
-    #undef I_INT_BIG_ENDIAN
-    #undef I_DOUBLE_BIG_ENDIAN
+        if (byte_counter >= header.file_length * 2) {
+            #undef I_INT_LITTLE_ENDIAN
+            #undef I_DOUBLE_LITTLE_ENDIAN
+            #undef I_INT_BIG_ENDIAN
+            #undef I_DOUBLE_BIG_ENDIAN
+
+            return shapes;
+        }
+    }
 }

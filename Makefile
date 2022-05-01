@@ -1,5 +1,5 @@
-FILES   = src/ui/ui.c src/ui/viewer.c src/main.c src/shp/types.c src/shp/read.c
-HEADERS = src/ui/viewer.h src/ui/ui.h src/shp/types.h src/shp/read.h
+FILES   = src/ui/ui.c src/ui/viewer.c src/main.c src/shp/types.c src/shp/read.c src/utils/vector.c
+HEADERS = src/ui/viewer.h src/ui/ui.h src/shp/types.h src/shp/read.h src/utils/vector.h
 FLAGS   = 
 CC      = gcc
 NAME    = vantage
