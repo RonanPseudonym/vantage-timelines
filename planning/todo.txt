@@ -2,9 +2,9 @@ X  Get gtk4 set up and building with c++
 X  Set up makefile
 X  Run gtk window
 X  Make custom draw widget
--  Read from shapefile
--  Create map widget
--  Create ui for app
+X  Read from shapefile
+X  Create map widget
+X  Create ui for app
 -  Add countries to map
 -  Make map look pretty
 -  Add cities to map

@@ -110,6 +110,7 @@ Vector *shp_read(char* dir) {
     }
 
     Vector* shapes = VECTOR_NEW();
+    vector_push(shapes, &header);
 
     for (;;) {
         int shape_type = I_INT_LITTLE_ENDIAN();
