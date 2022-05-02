@@ -22,7 +22,6 @@ gboolean viewer_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
     gtk_render_background(context, cr, 0, 0, width, height);
 
     // print width and height
-    g_print("%d %d\n", width, height);
 
     /* cairo_rectangle(cr, width / 2 - 50, height / 2 - 50, 100, 100);
 
@@ -43,8 +42,23 @@ gboolean viewer_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
     for (int i = 1; i < shapes->size; i++) {
         switch (header->shape_type) {
             case 5: {// Polygon
-                g_print("POINT\n");
-                Polygon* shp = vector_index(shapes, i);
+                Polygon *shp = vector_index(shapes, i);
+
+                for (int j = 0; j < shp->num_parts - 1; j++) {
+                    int start = ((int *)shp->parts)[j];
+                    int end = j > shp->num_parts ? ((int *)shp->parts)[j + 1] : shp->num_points;
+
+                    for (int k = start; k < end; k++) {
+                        Point current = ((Point *)shp->points)[k];
+                        Point next    = ((Point *)shp->points)[k + 1];
+
+                        cairo_move_to(cr, current.x + 200, current.y + 200);
+                        cairo_line_to(cr, next.x + 200, next.y + 200);
+                        cairo_stroke(cr);
+                    }
+                }
+
+                free(shp);
                 break;
             }
         }
