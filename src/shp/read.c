@@ -34,9 +34,13 @@ Vector *shp_read(char* dir) {
     #define I_INT_BIG_ENDIAN()       ((fgetc(fp) << 24) | (fgetc(fp) << 16) | (fgetc(fp) << 8) | fgetc(fp))
     #define I_DOUBLE_LITTLE_ENDIAN() (I_INT_LITTLE_ENDIAN() | (((long)I_INT_LITTLE_ENDIAN()) << 32))
     #define I_DOUBLE_BIG_ENDIAN()    ((((long)I_INT_BIG_ENDIAN()) << 32) | I_INT_BIG_ENDIAN())
-    #define MEMCPY_DL(dest)          x = I_DOUBLE_LITTLE_ENDIAN(); memcpy(dest, &x, sizeof(long)); byte_counter += 8 // oof what a clusterfuck of a macro
 
-    long x;
+
+    void MEMCPY_DL(void* dest) {
+        unsigned char aout[8] = {fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp)};
+        memcpy(dest, &aout, sizeof(double));
+        byte_counter += 8;
+    }
 
     ShpHeader header = NEW_SHPHEADER(); // Bytes 0-100
 
@@ -107,9 +111,13 @@ Vector *shp_read(char* dir) {
     Vector* shapes = VECTOR_NEW();
     vector_push(shapes, &header);
 
+    int c = 0;
     for (;;) {
-        int shape_type = I_INT_LITTLE_ENDIAN();
+        c ++;
+        unsigned int shape_type = I_INT_LITTLE_ENDIAN();
         byte_counter += 4;
+
+        printf("Shape %d: %d\n", c, shape_type);
 
         switch (shape_type) {
             case 5: {// Polygon
@@ -145,7 +153,7 @@ Vector *shp_read(char* dir) {
                     byte_counter += 8;
                 }
 
-                printf("\n");
+                /* printf("\n");
                 printf("Polygon:\n");
                 printf("  Box: %lf, %lf, %lf, %lf\n", polygon->box[0], polygon->box[1], polygon->box[2], polygon->box[3]);
                 printf("  Num parts: %d\n", polygon->num_parts);
@@ -155,20 +163,18 @@ Vector *shp_read(char* dir) {
                     printf("%d ", ((int*)polygon->parts)[i]);
                 }
                 printf("\n");
-                // printf("  Points: ");
-                // for (int i = 0; i < num_points; i ++) {
-                //    printf("(%lf, %lf) ", ((Point*)polygon->points)[i].x, ((Point*)polygon->points)[i].y);
-                // }
-
-                // Fix the NANs everywhere
+                printf("  Points: ");
+                for (int i = 0; i < num_points; i ++) {
+                   printf("(%lf, %lf) ", ((Point*)polygon->points)[i].x, ((Point*)polygon->points)[i].y);
+                } */
 
                 // sizeof(polygon) returning 8 no matter what, pretty funky if you ask me
                 // but, uh, it seems to work? so fuck it i'm living *my* life i'll let it live its
 
                 vector_push(shapes, polygon);
-
                 break;
             }
+            default: printf("Unknown shape type %d\n", shape_type);
         }
 
         if (byte_counter >= header.file_length * 2) {
@@ -176,7 +182,6 @@ Vector *shp_read(char* dir) {
             #undef I_DOUBLE_LITTLE_ENDIAN
             #undef I_INT_BIG_ENDIAN
             #undef I_DOUBLE_BIG_ENDIAN
-            #undef MEMCPY_DL
 
             return shapes;
         }

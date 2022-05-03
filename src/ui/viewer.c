@@ -52,6 +52,7 @@ gboolean viewer_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
                         Point current = ((Point *)shp->points)[k];
                         Point next    = ((Point *)shp->points)[k + 1];
 
+                        // Print the positions of current and next
                         cairo_move_to(cr, current.x + 200, current.y + 200);
                         cairo_line_to(cr, next.x + 200, next.y + 200);
                         cairo_stroke(cr);
