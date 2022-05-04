@@ -40,6 +40,7 @@ gboolean viewer_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
     ShpHeader *header = vector_index(shapes, 0);
 
     for (int i = 1; i < shapes->size; i++) {
+        printf("%d\n", i);
         switch (header->shape_type) {
             case 5: {// Polygon
                 Polygon *shp = vector_index(shapes, i);

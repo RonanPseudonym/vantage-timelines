@@ -111,20 +111,22 @@ Vector *shp_read(char* dir) {
     Vector* shapes = VECTOR_NEW();
     vector_push(shapes, &header);
 
+    unsigned int start = 0;
+
     int c = 0;
     for (;;) {
         c ++;
-        unsigned int shape_type = I_INT_LITTLE_ENDIAN();
-        byte_counter += 4;
 
-        printf("Shape %d: %d\n", c, shape_type);
+        start = byte_counter;
+        int shape_type = I_INT_LITTLE_ENDIAN();
+        byte_counter += 4;
 
         switch (shape_type) {
             case 5: {// Polygon
                 double box[4];
+
                 for (int i = 0; i < 4; i ++) {
                     MEMCPY_DL(&box[i]);
-                    byte_counter += 8;
                 }
 
                 int num_parts = I_INT_LITTLE_ENDIAN();
@@ -140,6 +142,7 @@ Vector *shp_read(char* dir) {
                 polygon->box[2] = box[2];
                 polygon->box[3] = box[3];
 
+
                 for (int i = 0; i < num_parts; i ++) {
                     ((int*)polygon->parts)[i] = I_INT_LITTLE_ENDIAN();
                     byte_counter += 4;
@@ -148,10 +151,10 @@ Vector *shp_read(char* dir) {
                 for (int i = 0; i < num_points; i ++) {
                     ((Point*)polygon->points)[i] = NEW_POINT();
                     MEMCPY_DL(&(((Point*)polygon->points)[i].x));
-                    byte_counter += 8;
                     MEMCPY_DL(&(((Point*)polygon->points)[i].y));
-                    byte_counter += 8;
                 }
+
+                // printf("START::%d %d %d %d %d %d\n", byte_counter-start, num_parts, num_parts * sizeof(int), num_points, num_points * sizeof(Point), num_points * sizeof(Point) + num_parts * sizeof(int));
 
                 /* printf("\n");
                 printf("Polygon:\n");
@@ -174,7 +177,7 @@ Vector *shp_read(char* dir) {
                 vector_push(shapes, polygon);
                 break;
             }
-            default: printf("Unknown shape type %d\n", shape_type);
+            // default: printf("Unknown shape type %d\n", shape_type);
         }
 
         if (byte_counter >= header.file_length * 2) {
