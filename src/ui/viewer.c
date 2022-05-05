@@ -40,28 +40,22 @@ gboolean viewer_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
     ShpHeader *header = vector_index(shapes, 0);
 
     for (int i = 1; i < shapes->size; i++) {
-        printf("%d\n", i);
-        switch (header->shape_type) {
-            case 5: {// Polygon
-                Polygon *shp = vector_index(shapes, i);
+        Polygon *shp = vector_index(shapes, i);
 
-                for (int j = 0; j < shp->num_parts - 1; j++) {
-                    int start = ((int *)shp->parts)[j];
-                    int end = j > shp->num_parts ? ((int *)shp->parts)[j + 1] : shp->num_points;
+        for (int j = 0; j < shp->num_parts - 1; j++) {
+            int start = ((int *)shp->parts)[j];
+            int end = j > shp->num_parts ? ((int *)shp->parts)[j + 1] : shp->num_points;
 
-                    for (int k = start; k < end; k++) {
-                        Point current = ((Point *)shp->points)[k];
-                        Point next    = ((Point *)shp->points)[k + 1];
+            for (int k = start; k < end - 1; k++) {
+                Point current = ((Point *)shp->points)[k];
+                Point next    = ((Point *)shp->points)[k + 1];
 
-                        // Print the positions of current and next
-                        cairo_move_to(cr, current.x + 200, current.y + 200);
-                        cairo_line_to(cr, next.x + 200, next.y + 200);
-                        cairo_stroke(cr);
-                    }
-                }
+                // Print the positions of current and next
+                cairo_move_to(cr, current.x * 2 + 300, 200 - current.y * 2);
+                cairo_line_to(cr, next.x * 2 + 300   , 200 - next.y * 2);
+                cairo_stroke(cr);
 
-                free(shp);
-                break;
+                printf("%d %d %d :: %lf, %lf\n", i, j, k, current.x, current.y);
             }
         }
     }

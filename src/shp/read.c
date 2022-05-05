@@ -121,6 +121,8 @@ Vector *shp_read(char* dir) {
         int shape_type = I_INT_LITTLE_ENDIAN();
         byte_counter += 4;
 
+        // printf("Shape type: %d\n", shape_type); TODO: Underflow??? 2x -> 1x -> ...
+
         switch (shape_type) {
             case 5: {// Polygon
                 double box[4];
