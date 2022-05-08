@@ -5,7 +5,7 @@ X  Make custom draw widget
 X  Read from shapefile
 X  Create map widget
 X  Create ui for app
--  Add countries to map
+X  Add countries to map
 -  Make map look pretty
 -  Add cities to map
 -  Make slider cycle through years

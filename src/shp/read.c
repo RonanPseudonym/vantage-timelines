@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "read.h"
 #include "types.h"
@@ -19,15 +20,18 @@ Vector *shp_read(char* dir) {
     strcpy(shp, dir);
     strcat(shp, "/World_Countries.shp");
 
+    strcpy(dbf, dir);
+    strcat(dbf, "/World_Countries.dbf");
+
     // Read byte stream from file shp
     FILE* fp = fopen(shp, "rb");
     if (fp == NULL) {
-        fprintf(stderr, "Error opening file %s\n", shp);
+        fprintf(stderr, "Error opening file [SHP] %s\n", shp);
     }
 
     FILE* fp_dbf = fopen(dbf, "rb");
     if (fp_dbf == NULL) {
-        fprintf(stderr, "Error opening file %s\n", dbf);
+        fprintf(stderr, "Error opening file [DBF] %s\n", dbf);
     }
 
     unsigned int byte_counter = 0;
@@ -42,7 +46,6 @@ Vector *shp_read(char* dir) {
     #define I_INT_BIG_ENDIAN()       ((fgetc(fp) << 24) | (fgetc(fp) << 16) | (fgetc(fp) << 8) | fgetc(fp))
     #define I_DOUBLE_LITTLE_ENDIAN() (I_INT_LITTLE_ENDIAN() | (((long)I_INT_LITTLE_ENDIAN()) << 32))
     #define I_DOUBLE_BIG_ENDIAN()    ((((long)I_INT_BIG_ENDIAN()) << 32) | I_INT_BIG_ENDIAN())
-
 
     void MEMCPY_DL(void* dest) {
         unsigned char aout[8] = {fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp), fgetc(fp)};
@@ -121,6 +124,8 @@ Vector *shp_read(char* dir) {
 
     unsigned int start = 0;
 
+    for (int i = 0; i < 66; i ++) fgetc(fp_dbf);
+
     int c = 0;
     for (;;) {
         c ++;
@@ -184,10 +189,27 @@ Vector *shp_read(char* dir) {
                 // sizeof(polygon) returning 8 no matter what, pretty funky if you ask me
                 // but, uh, it seems to work? so fuck it i'm living *my* life i'll let it live its
 
+                char name[32];
+                bool done = false;
+
+                for (int i = 0; i < 101; i ++) {
+                    char current = fgetc(fp_dbf);
+                    if (current == EOF) break;
+                    if (done || current == '\0' || i == 32) {
+                        done = true;
+                    } else {
+                        name[i] = current;
+                    }
+                }
+
+                strcpy(polygon->name, name);
+
                 vector_push(shapes, polygon);
+
                 break;
             }
             // default: printf("Unknown shape type %d\n", shape_type);
+
         }
 
         if (byte_counter >= header.file_length * 2) {

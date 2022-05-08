@@ -36,7 +36,7 @@ PolyLine NEW_POLYLINE(int num_parts, int num_points) {
 }
 */
 Polygon* NEW_POLYGON(int num_parts, int num_points) {
-    Polygon *x = malloc(sizeof(int) * 2 + sizeof(Point) * num_points + sizeof(int) * num_parts + sizeof(double) * 4);
+    Polygon *x = malloc(sizeof(int) * 2 + sizeof(Point) * num_points + sizeof(int) * num_parts + sizeof(double) * 4 + sizeof(char) * 32 /* could be just `32` but this is more readable */);
     x->num_parts  = num_parts;
     x->num_points = num_points;
     x->parts      = malloc(sizeof(int)   * num_parts);

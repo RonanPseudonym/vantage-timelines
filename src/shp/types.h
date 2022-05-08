@@ -47,6 +47,7 @@ struct _Polygon {
     int    num_points;
     void*  parts;  // num_parts VLA : int[]
     void*  points; // num_points VLA : Point[]
+    char   name[32];
 };
 
 struct _PointM {

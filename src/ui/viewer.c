@@ -39,7 +39,7 @@ gboolean viewer_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
     Vector    *shapes = shp_read("data/2022");
     ShpHeader *header = vector_index(shapes, 0);
 
-    int line_counter = 0;
+    Vector    *lines = VECTOR_NEW();
 
     for (int i = 1; i < shapes->size; i++) {
         Polygon *shp = vector_index(shapes, i);
@@ -50,20 +50,18 @@ gboolean viewer_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
 
             for (int k = start; k < end - 1; k++) {
                 Point current = ((Point *)shp->points)[k];
-                Point next    = ((Point *)shp->points)[k + 1];
+                Point next = ((Point *)shp->points)[k + 1];
 
-                // Print the positions of current and next
                 cairo_move_to(cr, current.x * 2 + 300, 200 - current.y * 2);
                 cairo_line_to(cr, next.x * 2 + 300   , 200 - next.y * 2);
                 cairo_stroke(cr);
-
-                line_counter ++;
             }
         }
+
+        printf("%d %s\n", i, shp->name);
     }
 
 
-    printf("%d\n", line_counter);
     free(shapes);
 
     return FALSE;
