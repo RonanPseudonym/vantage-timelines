@@ -11,7 +11,10 @@
 #include "../utils/vector.h"
 
 Vector *shp_read(char* dir) {
-    char* shp = malloc(strlen(dir) + strlen("/World_Countries.shp"));
+    unsigned short file_name_size = strlen(dir) + strlen("/World_Countries.foo");
+
+    char* shp = malloc(file_name_size);
+    char* dbf = malloc(file_name_size);
 
     strcpy(shp, dir);
     strcat(shp, "/World_Countries.shp");
@@ -20,6 +23,11 @@ Vector *shp_read(char* dir) {
     FILE* fp = fopen(shp, "rb");
     if (fp == NULL) {
         fprintf(stderr, "Error opening file %s\n", shp);
+    }
+
+    FILE* fp_dbf = fopen(dbf, "rb");
+    if (fp_dbf == NULL) {
+        fprintf(stderr, "Error opening file %s\n", dbf);
     }
 
     unsigned int byte_counter = 0;

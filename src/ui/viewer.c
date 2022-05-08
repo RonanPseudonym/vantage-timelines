@@ -39,10 +39,12 @@ gboolean viewer_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
     Vector    *shapes = shp_read("data/2022");
     ShpHeader *header = vector_index(shapes, 0);
 
+    int line_counter = 0;
+
     for (int i = 1; i < shapes->size; i++) {
         Polygon *shp = vector_index(shapes, i);
 
-        for (int j = 0; j < shp->num_parts - 1; j++) {
+        for (int j = 0; j < shp->num_parts; j++) {
             int start = ((int *)shp->parts)[j];
             int end = j > shp->num_parts ? ((int *)shp->parts)[j + 1] : shp->num_points;
 
@@ -55,11 +57,13 @@ gboolean viewer_callback(GtkWidget* widget, cairo_t* cr, gpointer data) {
                 cairo_line_to(cr, next.x * 2 + 300   , 200 - next.y * 2);
                 cairo_stroke(cr);
 
-                printf("%d %d %d :: %lf, %lf\n", i, j, k, current.x, current.y);
+                line_counter ++;
             }
         }
     }
 
+
+    printf("%d\n", line_counter);
     free(shapes);
 
     return FALSE;
