@@ -1,7 +1,7 @@
-FILES   = src/ui/ui.c src/ui/viewer.c src/main.c src/shp/types.c src/shp/read.c src/utils/vector.c
-HEADERS = src/ui/viewer.h src/ui/ui.h src/shp/types.h src/shp/read.h src/utils/vector.h
-FLAGS   = 
+FILES   = src/main.c src/shp/types.c src/shp/read.c src/utils/vector.c src/gfx/main.c
+HEADERS = src/shp/types.h src/shp/read.h src/utils/vector.h src/gfx/main.h
 CC      = gcc
+FLAGS   =
 NAME    = vantage
 GTK_MIN = 3.0
 #TARGET  = 11
@@ -14,12 +14,9 @@ APPLOC  = ~/.local/share/applications/
 
 build: $(HEADERS) $(FILES)
 	[ -d build ] || mkdir -p build
-#	$(CC) $$( pkg-config --cflags $(GTK_MIN) ) -o build/$(NAME) $(CPP) $$( pkg-config --libs $(GTK_MIN) )
 
-	$(CC) $(FLAGS) $(FILES) -o build/$(NAME) \
-		`pkg-config --cflags --libs gtk+-$(GTK_MIN)`
-		--std=c++$(TARGET)
-	
+	$(CC) $(FLAGS) $(FILES) -o build/$(NAME) `pkg-config --cflags glfw3` `pkg-config --static --libs glfw3`
+
 run: build
 	./build/$(NAME)
 
