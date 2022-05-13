@@ -4,6 +4,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "../utils/vector.h"
+#include "../shp/read.h"
+#include "../shp/types.h"
+
 const char* vertexSource = "\
     #version 150 core\n\
     in vec2 position;\
@@ -59,12 +63,40 @@ void gfx_main_loop() {
     GLuint vbo;
     glGenBuffers(1, &vbo);
 
-    GLfloat vertices[] = {
-        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // Top-left
-         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // Top-right
-         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Bottom-right
-        -0.5f, -0.5f, 1.0f, 1.0f, 1.0f  // Bottom-left
-    };
+    int n_parts  = 0;
+    int n_points = 0;
+
+    Vector *shapes = shp_read("data/2022");
+
+    for (int i = 0; i < shapes->size; i ++) {
+        Polygon *shape = vector_index(shapes, i);
+
+        n_parts  += shape->num_parts;
+        n_points += shape->num_points;
+    }
+
+    printf("%d %d\n", n_points, n_parts);
+
+    GLfloat* vertices = (GLfloat*)malloc(n_points * sizeof(GLfloat) * 5);
+    int vertex_counter = 0;
+
+    for (int i = 0; i < shapes->size; i ++) {
+        Polygon *shape = vector_index(shapes, i);
+
+        for (int j = 0; j < shape->num_points; j ++) {
+            Point vertex = *(Point*)(shape->points + sizeof(Point) * j);
+
+            ((GLfloat*)vertices)[vertex_counter    ] = (GLfloat)vertex.x;
+            ((GLfloat*)vertices)[vertex_counter + 1] = (GLfloat)vertex.y;
+            ((GLfloat*)vertices)[vertex_counter + 2] = 0.0;
+            ((GLfloat*)vertices)[vertex_counter + 3] = 0.0;
+            ((GLfloat*)vertices)[vertex_counter + 4] = 0.0;
+
+            vertex_counter += 5;
+        }
+    }
+
+    free(shapes);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
