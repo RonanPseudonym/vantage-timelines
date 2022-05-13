@@ -4,27 +4,32 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "shader.h"
+const char* vertexSource = "\
+    #version 150 core\n\
+    in vec2 position;\
+    in vec3 color;\
+    out vec3 Color;\
+    void main()\
+    {\
+        Color = color;\
+        gl_Position = vec4(position, 0.0, 1.0);\
+    }";
+
+const char* fragmentSource = "\
+    #version 150 core\n\
+    in vec3 Color;\
+    out vec4 outColor;\
+    void main()\
+    {\
+        outColor = vec4(Color, 1.0);\
+    }";
 
 void gfx_main_loop() {
-    GLFWwindow* window = NULL;
-    const GLubyte* renderer;
-    const GLubyte* version;
-    GLuint vao;
-    GLuint vbo;
+    GLFWwindow* window; // = NULL ???
 
-    /* geometry to use. these are 3 xyz points (9 floats total) to make a triangle */
-    GLfloat points[] = {0.0f, 0.5f, 0.0f, 0.5f, -0.5f, 0.0f, -0.5f, -0.5f, 0.0f};
-
-    /* GL shader objects for vertex and fragment shader [components] */
-    GLuint vert_shader, frag_shader;
-    /* GL shader programme object [combined, to link] */
-    GLuint shader_programme;
-
-    /* start GL context and O/S window using the GLFW helper library */
     if ( !glfwInit() ) {
-    fprintf( stderr, "ERROR: could not start GLFW3\n" );
-    return;
+        fprintf( stderr, "ERROR: could not start GLFW3\n" );
+        return;
     }
 
     /* Version 4.1 Core is a good default that should run on just about everything. Adjust later to suit project requirements. */
@@ -41,148 +46,89 @@ void gfx_main_loop() {
     }
     glfwMakeContextCurrent( window );
 
-    /* start GLEW extension handler */
+    // Initialize GLEW
     glewExperimental = GL_TRUE;
     glewInit();
 
-    /* tell GL to only draw onto a pixel if the shape is closer to the viewer
-    than anything already drawn at that pixel */
-    glEnable( GL_DEPTH_TEST ); /* enable depth-testing */
-    /* with LESS depth-testing interprets a smaller depth value as meaning "closer" */
-    glDepthFunc( GL_LESS );
-
-    /* a vertex buffer object (VBO) is created here. this stores an array of
-    data on the graphics adapter's memory. in our case - the vertex points */
-    glGenBuffers( 1, &vbo );
-    glBindBuffer( GL_ARRAY_BUFFER, vbo );
-    glBufferData( GL_ARRAY_BUFFER, 9 * sizeof( GLfloat ), points, GL_STATIC_DRAW );
-
-    /* the vertex array object (VAO) is a little descriptor that defines which
-    data from vertex buffer objects should be used as input variables to vertex
-    shaders. in our case - use our only VBO, and say 'every three floats is a
-    variable' */
-    glGenVertexArrays( 1, &vao );
-    glBindVertexArray( vao );
-    /* "attribute #0 should be enabled when this vao is bound" */
-    glEnableVertexAttribArray( 0 );
-    /* this VBO is already bound, but it's a good habit to explicitly specify which
-    VBO's data the following vertex attribute pointer refers to */
-    glBindBuffer( GL_ARRAY_BUFFER, vbo );
-    /* "attribute #0 is created from every 3 variables in the above buffer, of type
-    float (i.e. make me vec3s)" */
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, NULL );
-
-    /* here we copy the shader strings into GL shaders, and compile them. we
-    then create an executable shader 'program' and attach both of the compiled
-      shaders. we link this, which matches the outputs of the vertex shader to
-    the inputs of the fragment shader, etc. and it is then ready to use */
-    vert_shader = glCreateShader( GL_VERTEX_SHADER );
-    glShaderSource( vert_shader, 1, &vertex_shader, NULL );
-    glCompileShader( vert_shader );
-    frag_shader = glCreateShader( GL_FRAGMENT_SHADER );
-    glShaderSource( frag_shader, 1, &fragment_shader, NULL );
-    glCompileShader( frag_shader );
-    shader_programme = glCreateProgram();
-    glAttachShader( shader_programme, frag_shader );
-    glAttachShader( shader_programme, vert_shader );
-    glLinkProgram( shader_programme );
-
-    /* this loop clears the drawing surface, then draws the geometry described
-      by the VAO onto the drawing surface. we 'poll events' to see if the window
-    was closed, etc. finally, we 'swap the buffers' which displays our drawing
-      surface onto the view area. we use a double-buffering system which means
-      that we have a 'currently displayed' surface, and 'currently being drawn'
-      surface. hence the 'swap' idea. in a single-buffering system we would see
-      stuff being drawn one-after-the-other */
-    while ( !glfwWindowShouldClose( window ) ) {
-    /* wipe the drawing surface clear */
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    glUseProgram( shader_programme );
-    glBindVertexArray( vao );
-    /* draw points 0-3 from the currently bound VAO with current in-use shader */
-    glDrawArrays( GL_TRIANGLES, 0, 3 );
-    /* update other events like input handling */
-    glfwPollEvents();
-    /* put the stuff we've been drawing onto the display */
-    glfwSwapBuffers( window );
-    }
-
-    /* close GL context and any other GLFW resources */
-    glfwTerminate();
-    return;
-}
-
-/* void gfx_main_loop() {
-    if (!glfwInit()) return;
-
-    // =====
-
-    glewExperimental = GL_TRUE;
-    glewInit();
-
-    // =====
-
-    glfwSetErrorCallback(error_callback);
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-
-    if (!window) return;
-
-    glfwSetKeyCallback(window, key_callback);
-    glfwMakeContextCurrent(window);
-
-    // =====
-
-    float points[] = {
-        0.0f,  0.5f,  0.0f,
-        0.5f, -0.5f,  0.0f,
-        -0.5f, -0.5f,  0.0f
-    };
-
-    GLuint vbo = 0;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), points, GL_STATIC_DRAW);
-
-    GLuint vao = 0;
+    // Create Vertex Array Object
+    GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    glEnableVertexAttribArray(0);
+
+    // Create a Vertex Buffer Object and copy the vertex data to it
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+
+    GLfloat vertices[] = {
+        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // Top-left
+         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // Top-right
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Bottom-right
+        -0.5f, -0.5f, 1.0f, 1.0f, 1.0f  // Bottom-left
+    };
+
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    vs = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &vertex_shader, NULL);
-    glCompileShader(vs);
+    // Create an element array
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
 
-    fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &fragment_shader, NULL);
-    glCompileShader(fs);
+    GLuint elements[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
 
-    GLuint shader_programme = glCreateProgram();
-    glAttachShader(shader_programme, fs);
-    glAttachShader(shader_programme, vs);
-    glLinkProgram(shader_programme);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
-    // =====
+    // Create and compile the vertex shader
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexSource, NULL);
+    glCompileShader(vertexShader);
+
+    // Create and compile the fragment shader
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+    glCompileShader(fragmentShader);
+
+    // Link the vertex and fragment shader into a shader program
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glBindFragDataLocation(shaderProgram, 0, "outColor");
+    glLinkProgram(shaderProgram);
+    glUseProgram(shaderProgram);
+
+    // Specify the layout of the vertex data
+    GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+    glEnableVertexAttribArray(posAttrib);
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), 0);
+
+    GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+    glEnableVertexAttribArray(colAttrib);
+    glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
 
     while (!glfwWindowShouldClose(window)) {
-        int width, height;
 
-        glfwGetFramebufferSize(window, &width, &height);
-        glViewport(0, 0, width, height);
+        // Clear the screen to black
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // glUseProgram(shader_programme);
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        // Draw a rectangle from the 2 triangles using 6 indices
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glfwSwapBuffers(window);
         glfwPollEvents();
+        glfwSwapBuffers( window );
     }
 
-    // =====
+    glDeleteProgram(shaderProgram);
+    glDeleteShader(fragmentShader);
+    glDeleteShader(vertexShader);
 
-    glfwDestroyWindow(window);
+    glDeleteBuffers(1, &ebo);
+    glDeleteBuffers(1, &vbo);
+
+    glDeleteVertexArrays(1, &vao);
+
     glfwTerminate();
-
-    exit(EXIT_SUCCESS);
-}; */
+}

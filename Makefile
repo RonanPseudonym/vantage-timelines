@@ -1,5 +1,5 @@
 FILES   = src/main.c src/shp/types.c src/shp/read.c src/utils/vector.c src/gfx/main.c
-HEADERS = src/shp/types.h src/shp/read.h src/utils/vector.h src/gfx/main.h src/gfx/shader.h
+HEADERS = src/shp/types.h src/shp/read.h src/utils/vector.h src/gfx/main.h
 CC      = gcc
 FLAGS   = -lglfw -lGL -lGLEW
 NAME    = vantage
