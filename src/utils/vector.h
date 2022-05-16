@@ -16,7 +16,7 @@ struct _Vector {
 
 Vector *vector_init   (Vector *v);
 void    vector_push   (Vector *v, void *item);
-void    vector_remove (Vector *v, void *item);
+void    vector_delete (Vector *v, size_t index);
 void    vector_clear  (Vector *v);
 void    vector_free   (Vector *v);
 void   *vector_index  (Vector *v, size_t index);

@@ -75,28 +75,28 @@ void gfx_main_loop() {
         n_points += shape->num_points;
     }
 
-    printf("%d %d\n", n_points, n_parts);
-
-    GLfloat* vertices = (GLfloat*)malloc(n_points * sizeof(GLfloat) * 5);
+    GLfloat* vertices = malloc(sizeof(GLfloat) * 5 * n_points);
+    printf(":DDD\n");
     int vertex_counter = 0;
 
-    for (int i = 0; i < shapes->size; i ++) {
+    /* for (int i = 1; i < shapes->size; i ++) {
         Polygon *shape = vector_index(shapes, i);
 
         for (int j = 0; j < shape->num_points; j ++) {
             Point vertex = *(Point*)(shape->points + sizeof(Point) * j);
 
-            ((GLfloat*)vertices)[vertex_counter    ] = (GLfloat)vertex.x;
-            ((GLfloat*)vertices)[vertex_counter + 1] = (GLfloat)vertex.y;
-            ((GLfloat*)vertices)[vertex_counter + 2] = 0.0;
-            ((GLfloat*)vertices)[vertex_counter + 3] = 0.0;
-            ((GLfloat*)vertices)[vertex_counter + 4] = 0.0;
+            vertices[vertex_counter    ] = (GLfloat)vertex.x;
+            vertices[vertex_counter + 1] = (GLfloat)vertex.y;
+            vertices[vertex_counter + 2] = 0.0;
+            vertices[vertex_counter + 3] = 0.0;
+            vertices[vertex_counter + 4] = 0.0;
 
             vertex_counter += 5;
+
         }
     }
 
-    free(shapes);
+    free(shapes); */
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
