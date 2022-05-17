@@ -1,7 +1,7 @@
-FILES   = src/main.c src/shp/types.c src/shp/read.c src/utils/vector.c src/gfx/main.c src/gfx/bowyer_watson.c
-HEADERS = src/shp/types.h src/shp/read.h src/utils/vector.h src/gfx/main.h src/gfx/triangle.h src/gfx/bowyer_watson.h
+FILES   = src/main.c src/shp/types.c src/shp/read.c src/utils/vector.c src/gfx/main.c src/gfx/bowyer_watson.c src/gfx/convex_hull.c
+HEADERS = src/shp/types.h src/shp/read.h src/utils/vector.h src/gfx/main.h src/gfx/triangle.h src/gfx/bowyer_watson.h src/gfx/convex_hull.h
 CC      = gcc
-FLAGS   = -lglfw -lGL -lGLEW
+FLAGS   = -lglfw -lGL -lGLEW -lm -ldl
 NAME    = vantage
 GTK_MIN = 3.0
 #TARGET  = 11
