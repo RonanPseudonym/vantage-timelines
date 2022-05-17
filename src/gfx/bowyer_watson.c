@@ -30,6 +30,15 @@ double vector_distance(Point a, Point b) {
     return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
 }
 
+double triangle_area(Triangle t) {
+    double a = vector_distance(t.a, t.b);
+    double b = vector_distance(t.b, t.c);
+    double c = vector_distance(t.c, t.a);
+
+    double s = (a+b+c)/2;
+    return sqrt(s*(s-a)*(s-b)*(s-c));
+}
+
 double triangle_circumcircle_radius(Triangle t) {
     double a = vector_distance(t.a, t.b);
     double b = vector_distance(t.b, t.c);
@@ -80,10 +89,20 @@ bool edge_not_shared(Point e[2], Vector *bad_triangles) {
     return true;
 }
 
-Vector *bowyer_watson(int num_points, Point points[num_points]) {
+Vector *bowyer_watson(int num_points, Point points[num_points], Triangle striangle) {
     Vector *triangulation = VECTOR_NEW();
 
-    Triangle striangle = super_triangle(quick_hull(num_points, points));
+    Vector *pp = VECTOR_NEW();
+    for (int i = 0; i < num_points; i ++) {
+        vector_push(pp, &points[i]);
+    }
+
+    //Triangle striangle = super_triangle(pp);
+
+    printf("a %lf %lf\n", striangle.a);
+    printf("b %lf %lf\n", striangle.b);
+    printf("c %lf %lf\n", striangle.c);
+
     vector_push(triangulation, &striangle);
 
     for (int i = 0; i < num_points; i ++) {
