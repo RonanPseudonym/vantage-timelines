@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdbool.h>
 
 #include "triangle.h"
 #include "../shp/types.h"
@@ -6,8 +7,73 @@
 #include "super_triangle.h"
 #include "bowyer_watson.h"
 
+double h(double n) {
+}
+
+void advance_b_to_right_chain(int *b) {
+    while (h(*b + 1) >= h(*b)) {
+        *b ++;
+    }
+}
+
+void move_a_if_low_and_b_if_high(Point *A, int *a, int *b) {
+    while (h(*b) > h(*a)) {
+        if (gamma(*a, gamma_of(A)) && intersects_below(gamma_of(A), b)) {
+            *b ++;
+        } else {
+            *a ++;
+        }
+    }
+}
+
+void search_for_b_tangency(Point *B, int *a, int *b) {
+    while (
+            gamma(b, gamma_of(*b)) && 
+            intersects_below(gamma_of(*B), *B) && 
+            (h(*b) >= h(*a - 1))) {
+        *b ++;
+    }
+}
+
+void update_sides_ca(Triangle *min_area_triangle, int *a, int *c) { // Gotta fix this w/ point != int
+    min_area_triangle->a = *a; // May not be entirely correct? Should be a/c - 1 maybe?
+    min_area_triangle->c = *c;
+}
+
+bool is_not_b_tangency(Point *B, int *a, int *b) {
+    return (gamma(*b, gamma_of(*b, gamma_of(*B))) || (h(*b) < h(*b - 1)));
+}
+
+void update_sides_ba(Point hull[], Point *B, int *a, int *b) {
+    *B = hull[*b];
+
+    if (middle_point_of_side_b())
+}
+
 Triangle super_triangle(int n, Point hull[n]) {
-    Triangle out;
+    Triangle min_area_triangle;
+    double min_area = INFINITY;
+
+    int a = 2;
+    int b = 3;
+
+    for (int c = 1; c < n; c ++) {
+        advance_b_to_right_chain(&b);
+        move_a_if_low_and_b_if_high(&min_area_triangle->a, &a, &b);
+        search_for_b_tangency(&min_area_triangle->b, &a, &b);
+
+        update_sides_ca(&min_area_triangle, &a, &c);
+
+        if (is_not_b_tangency(&min_area_triangle->b, &a, &b)) {
+            update_sides_ba();
+        } else {
+            update_side_b();
+        }
+
+        if (is_local_minimum_triangle()) {
+            update_minimum_area_enclosing_triangle(min_area_triangle, min_area);
+        }
+    }
 }
 
 // Triangle super_triangle(int n, Point hull[n]) {
@@ -93,5 +159,5 @@ Triangle super_triangle(int n, Point hull[n]) {
         }
     }
 
-    return striangle; */
-}
+    return striangle;
+} */
