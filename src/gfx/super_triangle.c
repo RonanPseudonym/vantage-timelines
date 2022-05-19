@@ -13,9 +13,133 @@ typedef enum {
     SIDES_FLUSH
 } status_flag;
 
+typedef enum {
+    ABOVE,
+    BELOW,
+    CRITICAL
+} dir_flag;
+
 status_flag validation_flag;
 
 //double h(double x) {};
+
+dir_flag intersects_above_or_below(succ_or_pred_index, index) {
+    if (h(succ_or_pred_index) > h(index)) {
+        return ABOVE;
+    } else {
+        return BELOW;
+    }
+}
+
+double angle_of_line(Point a, Point b) {
+    double y = b.y - a.y;
+    double x = b.x - a.x;
+
+    double angle = arctangent(y, x) * 180 / PI;
+
+    if (angle < 0) {
+        return angle + 360;
+    } else {
+        return angle;
+    }
+}
+
+double opposite_angle(double angle) {
+    if (angle > 180) {
+        return (angle - 180);
+    } else {
+        return (angle + 180);
+    }
+}
+
+bool is_angle_btw_non_reflex(double angle, double angle1, double angle2) {
+    if (abs(angle1 - angle2) > 180) {
+        if (angle1 > angle2) {
+            return (angle1<angle && angle<=360) || 
+                (0<=angle && angle<angle2);
+        } else {
+            return (angle2<angle && angle<=360) ||
+                (0<=angle && angle<angle1);
+        }
+    } else {
+        if (((angle1-angle2) % 180) > 0) {
+            return (angle2<angle) && (angle<angle1)
+        } else {
+            return (angle1<angle) && (angle<angle2)
+        }
+    }
+}
+
+bool is_opposite_angle_btw_non_reflex(double angle, double angle1, double angle2) {
+    double o_angle = opposite_angle(angle);
+
+    return (is_angle_btw_non_reflex(o_angle, angle1, angle2));
+}
+
+/* int sqrt_mult[any x, int y] (
+    <- int::(math:sqrt[x] * y) // <- is return, x::(y) is cast
+
+    io:nputs!["Error - failed to return"] // putsn! is a macro on top of puts, which appends a new line at the end of puts. `!` specifies it's a macro
+)
+
+fn fizzbuzz[] (
+    loop[&(int i), 1, 100] ( // Passing a pointer bcz loop is incrementing 
+        io:puts["{i} : "] // String formatting with {}
+
+        ?[!i%3] io:puts["Fizz"] // ? is if, ?? is elif and ??? is else
+        ?[!i%5] io:puts["Buzz"]
+
+        io:puts["\n"]
+     )
+) */
+
+bool is_angle_btw_pred_and_succ(double *angle, double angle_pred, double angle_succ) {
+    if (is_angle_btw_non_reflex(angle, angle_pred, angle_succ)) {
+        return true;
+    } else if (is_opposite_angle_btw_non_reflex(*angle, angle_pred, angle_succ)) {
+        *angle = opposite_angle(angle);
+        return true;
+    }
+
+    return false;
+}
+
+
+dir_flag intersects(int n, Point hull[n], double angle, int index) {
+    double angle_pred = angle_of_line(hull[index - 1], polygon[index]);
+    double angle_succ = angle_of_line(hull[index + 1], polygon[index]);
+    double angle_c    = angle_of_line(hull[c     - 1], polygon[c    ]);
+
+    if (is_angle_btw_pred_and_succ(&angle_c, angle_pred, angle_succ)) {
+        if (is_angle_btw_non_reflex(angle, angle_pred, angle_c) ||
+                (angle == angle_pred)) {
+            return intersects_above_of_below(index - 1, index);
+        } else if (is_angle_btw_non_reflex(angle, angle_succ, angle_c) ||
+                (angle == angle_succ)) {
+            return intersects_above_or_below(index + 1, index);
+        }
+    } else {
+        if (is_angle_btw_non_reflex(angle, angle_pred, angle_succ) ||
+                ((angle == angle_pred) && (angle != angle_c)) ||
+                ((angle == angle_succ) && (angle != angle_c))) {
+            return BELOW;
+        }
+    }
+
+    return CRITICAL;
+}
+
+bool intersects_below(int n, Point hull[n], Point gamma_point, int index) {
+    double angle = angle_of_line(hull[index], gamma_point);
+
+    return intersects(angle, index) == BELOW;
+}
+
+bool intersects_above(int n, Point hull[n], Point gamma_point, int index) {
+    double angle = angle_of_line(gamma_point, hull[index];
+
+    return intersects(angle, index) == ABOVE;
+}
 
 Point intersection(Point a1, Point a2, Point b1, Point b2) {
     double x1 = a1.x;
