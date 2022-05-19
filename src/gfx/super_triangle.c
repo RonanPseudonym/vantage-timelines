@@ -7,13 +7,78 @@
 #include "super_triangle.h"
 #include "bowyer_watson.h"
 
-double h(double n) {
+typedef enum {
+    SIDE_A_TANGENT,
+    SIDE_B_TANGENT,
+    SIDES_FLUSH
+} status_flag;
+
+status_flag validation_flag;
+
+//double h(double x) {};
+
+Point intersection(Point a1, Point a2, Point b1, Point b2) {
+    double x1 = a1.x;
+    double y1 = a1.y;
+    double x2 = a2.x;
+    double y2 = a2.y;
+    double x3 = b1.x;
+    double y3 = b1.y;
+    double x4 = b2.x;
+    double y4 = b2.y;
+
+    double d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    if (d == 0) {
+        return (Point){-1, -1};
+    }
+
+    double xi = ((x3 - x4) * (x1 * y2 - y1 * x2) - (x1 - x2) * (x3 * y4 - y3 * x4)) / d;
+    double yi = ((y3 - y4) * (x1 * y2 - y1 * x2) - (y1 - y2) * (x3 * y4 - y3 * x4)) / d;
+
+    return (Point){xi, yi};
+}
+
+bool point_on_line(Point p, Point a, Point b) {
+    double x1 = a.x;
+    double y1 = a.y;
+    double x2 = b.x;
+    double y2 = b.y;
+    double x3 = p.x;
+    double y3 = p.y;
+
+    double d = (x1 - x2) * (y3 - y1) - (y1 - y2) * (x3 - x1);
+    if (d == 0) {
+        return true;
+    }
+
+    return false;
+}
+
+Point middle_point(Point a, Point b) {
+    return (Point){(a.x + b.x) / 2, (a.y + b.y) / 2};
+}
+
+bool no_intersection(Point a1, Point a2, Point b1, Point b2) {
+    return (a1.x == b1.x && a1.y == b1.y) || (a1.x == b2.x && a1.y == b2.y) || (a2.x == b1.x && a2.y == b1.y) || (a2.x == b2.x && a2.y == b2.y);
 }
 
 void advance_b_to_right_chain(int *b) {
     while (h(*b + 1) >= h(*b)) {
         *b ++;
     }
+}
+
+bool middle_point_of_side_b(Point *A, Point *B, Point *C, Point *middle_point) {
+    if (!intersection(*A, *B, *B, *C) || !intersection(*A, *B, *C, *A)) {
+        return false;
+    }
+
+    *A = intersection(*A, *B, *B, *C);
+    *B = intersection(*C, *A, *A, *B);
+
+    *middle_point = middle_point(*A, *B);
+
+    return true;
 }
 
 void move_a_if_low_and_b_if_high(Point *A, int *a, int *b) {
@@ -35,20 +100,77 @@ void search_for_b_tangency(Point *B, int *a, int *b) {
     }
 }
 
-void update_sides_ca(Triangle *min_area_triangle, int *a, int *c) { // Gotta fix this w/ point != int
-    min_area_triangle->a = *a; // May not be entirely correct? Should be a/c - 1 maybe?
-    min_area_triangle->c = *c;
+void update_sides_ca(int n, Point hull[n], Triangle *min_area_triangle, int *a, int *c) {
+    min_area_triangle->a = hull[*c]; // May not be entirely correct? Should be a/c - 1 maybe?
+    min_area_triangle->c = hull[*a];
 }
 
 bool is_not_b_tangency(Point *B, int *a, int *b) {
-    return (gamma(*b, gamma_of(*b, gamma_of(*B))) || (h(*b) < h(*b - 1)));
+    return (gamma(*b, gamma_of(*B)) && intersects_above(gamma_of(*B), b) || (h(*b) < h(*a - 1)));
 }
 
-void update_sides_ba(Point hull[], Point *B, int *a, int *b) {
+void update_sides_ba(int n, Point hull[n], Point *A, Point *B, int *a, int *b) {
     *B = hull[*b];
 
-    if (middle_point_of_side_b())
+    if (middle_point_of_side_b(middle_point(*A, *B))
+            && (h(middle_point(*A, *B)) < h(*a - 1))) {
+        *A = find_vertex_c_on_side_b();
+
+        validation_flag = SIDE_A_TANGENT;
+    } else {
+        validation_flag = SIDES_FLUSH;
+    }
 }
+
+void update_side_b(int n, Point hull[n], Point *B, int *b) {
+    gamma(b, B);
+    *B = hull[*b];
+
+    validation_flag = SIDE_B_TANGENT;
+}
+
+bool pcomp(Point a, Point b) {
+    return (a.x == b.x && a.y == b.y);
+}
+
+bool is_valid_minimal_triangle(int n, Point hull[n], Point *A, Point *B, Point *C, int *a, int *b, int *c) {
+    Point midpoint_a = middle_point(*B, *C);
+    Point midpoint_b = middle_point(*A, *C);
+    Point midpoint_c = middle_point(*A, *B);
+
+    bool valid_a;
+    bool valid_b;
+    bool valid_c;
+
+    if (validation_flag == SIDE_A_TANGENT) {
+        valid_a = pcomp(midpoint_a, hull[*a - 1]);
+    } else {
+        valid_a = point_on_line(midpoint_a, *C, *A);
+    }
+
+    if (validation_flag == SIDE_B_TANGENT) {
+        valid_b = pcomp(midpoint_b, hull[*b - 1]);
+    } else {
+        valid_b = point_on_line(midpoint_b, *A, *B);
+    }
+
+    valid_c = point_on_line(midpoint_c, *B, *C);
+
+    return (valid_a && valid_b && valid_c);
+}
+
+bool is_local_minimum_triangle(int n, Point hull[n], Point *A, Point *B, Point *C, int *a, int *b, int *c) {
+    if (no_intersection(*C, *A, *A, *B) || no_intersection(*C, *A, *B, *C)) { // TODO: This could be wrong. Check. Also, the algorithm might think lines sharing a vertex count as intersections? Check that bad boy too.
+        return false;
+    } else {
+        *A = intersection(*A, *B, *B, *C); // TODO: Same here
+        *B = intersection(*C, *A, *B, *C);
+        *C = intersection(*C, *A, *A, *B);
+
+        return is_valid_minimal_triangle(n, hull, A, B, C, a, b, c);
+    }
+}
+
 
 Triangle super_triangle(int n, Point hull[n]) {
     Triangle min_area_triangle;
@@ -59,25 +181,26 @@ Triangle super_triangle(int n, Point hull[n]) {
 
     for (int c = 1; c < n; c ++) {
         advance_b_to_right_chain(&b);
-        move_a_if_low_and_b_if_high(&min_area_triangle->a, &a, &b);
-        search_for_b_tangency(&min_area_triangle->b, &a, &b);
+        move_a_if_low_and_b_if_high(&min_area_triangle.a, &a, &b);
+        search_for_b_tangency(&min_area_triangle.b, &a, &b);
 
-        update_sides_ca(&min_area_triangle, &a, &c);
+        update_sides_ca(n, hull, &min_area_triangle, &a, &c);
 
-        if (is_not_b_tangency(&min_area_triangle->b, &a, &b)) {
-            update_sides_ba();
+        if (is_not_b_tangency(&min_area_triangle.b, &a, &b)) {
+            update_sides_ba(n, hull, &min_area_triangle.a, &min_area_triangle.b, &a, &b);
         } else {
-            update_side_b();
+            update_side_b(n, hull, &min_area_triangle.b, &b);
         }
 
-        if (is_local_minimum_triangle()) {
+        if (is_local_minimum_triangle(n, hull, &min_area_triangle.a, &min_area_triangle.b, &min_area_triangle.c, &a, &b, &c)) {
             update_minimum_area_enclosing_triangle(min_area_triangle, min_area);
         }
     }
 }
 
+/*
 // Triangle super_triangle(int n, Point hull[n]) {
-    /* Point bmin, bmax;
+    Point bmin, bmax;
 
     bmin.x = INFINITY;
     bmin.y = INFINITY;
