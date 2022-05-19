@@ -23,6 +23,36 @@ status_flag validation_flag;
 
 //double h(double x) {};
 
+bool find_vertex_c_on_side_b(int n, Point hull[n], int a, int b, int c, Point A, Point B, Point C) {
+    if (!find_gamma_intersection_points(polygon[a-1], A, B, B, C, intersection_point_1, intersection_point_2)) {
+        printf("Hiiii\n");
+    }
+
+    if (on_same_side_of_line(intersection_point_1, hull[c + 1], hull[c], hull[c-1])) {
+        return intersection_point_1;
+    } else {
+        return intersection_point_2;
+    return true;
+}
+
+bool find_gamma_intersection_points(int index, int line_1_start_vertex, int line_1_end_vertex, int line_2_start_vertex, int line_2_end_vertex, int intersection_point_1, int intersection_point_2) {
+    // Do this little bitchy fella with copilot :)
+}
+
+bool gamma(int n, Point hull[n], int index, Point *gamma_point, int a, int c) {
+    if (!find_gamma_intersection_points(index, polygon[a], polygon[a-1], polygon[c], polygon[c-1], intersection_point_1, intersection_point_2)) {
+        return false;
+    }
+
+    if (on_same_side_of_line(hull[c], hull[c-1], intersection_point_1 && hull[c + 1])) {
+        *gamma_point = intersection_point_1;
+    } else {
+        *gamma_point = intersection_point_2;
+    }
+
+    return true;
+}
+
 dir_flag intersects_above_or_below(succ_or_pred_index, index) {
     if (h(succ_or_pred_index) > h(index)) {
         return ABOVE;
