@@ -1,5 +1,7 @@
 #include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "triangle.h"
 #include "../shp/types.h"
@@ -24,7 +26,7 @@ status_flag validation_flag;
 //double h(double x) {};
 
 bool find_vertex_c_on_side_b(int n, Point hull[n], int a, int b, int c, Point A, Point B, Point C) {
-    if (!find_gamma_intersection_points(polygon[a-1], A, B, B, C, intersection_point_1, intersection_point_2)) {
+    if (!find_gamma_intersection_points(hull[a-1], A, B, B, C, intersection_point_1, intersection_point_2)) {
         printf("Hiiii\n");
     }
 
@@ -35,12 +37,12 @@ bool find_vertex_c_on_side_b(int n, Point hull[n], int a, int b, int c, Point A,
     return true;
 }
 
-bool find_gamma_intersection_points(int index, int line_1_start_vertex, int line_1_end_vertex, int line_2_start_vertex, int line_2_end_vertex, int intersection_point_1, int intersection_point_2) {
+bool find_gamma_intersection_points(int index, Point line_1_start_vertex, Point line_1_end_vertex, Point line_2_start_vertex, Point line_2_end_vertex, Point intersection_point_1, Point intersection_point_2) {
     // Do this little bitchy fella with copilot :)
 }
 
 bool gamma(int n, Point hull[n], int index, Point *gamma_point, int a, int c) {
-    if (!find_gamma_intersection_points(index, polygon[a], polygon[a-1], polygon[c], polygon[c-1], intersection_point_1, intersection_point_2)) {
+    if (!find_gamma_intersection_points(index, hull[a], hull[a-1], hull[c], hull[c-1], intersection_point_1, intersection_point_2)) {
         return false;
     }
 
@@ -53,7 +55,7 @@ bool gamma(int n, Point hull[n], int index, Point *gamma_point, int a, int c) {
     return true;
 }
 
-dir_flag intersects_above_or_below(succ_or_pred_index, index) {
+dir_flag intersects_above_or_below(int succ_or_pred_index, int index) {
     if (h(succ_or_pred_index) > h(index)) {
         return ABOVE;
     } else {
@@ -85,17 +87,17 @@ double opposite_angle(double angle) {
 bool is_angle_btw_non_reflex(double angle, double angle1, double angle2) {
     if (abs(angle1 - angle2) > 180) {
         if (angle1 > angle2) {
-            return (angle1<angle && angle<=360) || 
+            return (angle1<angle && angle<=360) ||
                 (0<=angle && angle<angle2);
         } else {
             return (angle2<angle && angle<=360) ||
                 (0<=angle && angle<angle1);
         }
     } else {
-        if (((angle1-angle2) % 180) > 0) {
-            return (angle2<angle) && (angle<angle1)
+        if (((angle1-angle2) % 180.0) > 0) {
+            return (angle2<angle) && (angle<angle1);
         } else {
-            return (angle1<angle) && (angle<angle2)
+            return (angle1<angle) && (angle<angle2);
         }
     }
 }
