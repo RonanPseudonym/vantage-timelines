@@ -79,7 +79,9 @@ void bw2_run(Point p) {
 
     for (int i = triangles->size-1; i>=0; i--) {
         Triangle *t = vector_index(triangles, i);
+        // printf("%lf %lf %lf %lf %lf %lf :: %lf %lf\n", t->a.x, t->a.y, t->b.x, t->b.y, t->c.x, t->c.y, p.x, p.y);
         if (tri_in_circum(*t, p)) {
+            // printf(" -> TRUE\n");
             vector_push(bads, t);
             vector_delete(triangles, i);
         }
@@ -93,11 +95,11 @@ void bw2_run(Point p) {
         Edge e3 = {t->c, t->a};
 
         // print out edges
-        printf("===== (%lf %lf: %lf %lf) =====\n", e1.a.x, e1.a.y, e1.b.x, e1.b.y);
+        /* printf("===== (%lf %lf: %lf %lf) =====\n", e1.a.x, e1.a.y, e1.b.x, e1.b.y);
         for (int j = 0; j < edges->size; j ++) {
             Edge *e = (Edge*)vector_index(edges, j);
             printf("(%f %f %f %f)\n", e->a.x, e->a.y, e->b.x, e->b.y);
-        }
+        } */
 
         if (vector_find(edges, &e1, compare_points) == -1) {
             vector_push(edges, VAL_TO_POINTER(e1, sizeof(Edge)));
@@ -121,6 +123,7 @@ void bw2_run(Point p) {
     for (int i = 0; i < to_remove->size; i++) { // The problem causing the segfault is that sizeof(to_remove) == sizeof(edges), so it's deleting shit all the way down to -1. this is an issue with items being pushed to to_remove.
         Edge *e = (Edge*)vector_index(to_remove, i);
         vector_delete(edges, vector_find(edges, e, compare_points));
+        // vector_delete(to_remove, i); // added this off the cuff, might not work but sure stops segfault
     }
 
     for (int i = 0; i < edges->size; i++) {
@@ -132,6 +135,11 @@ void bw2_run(Point p) {
 
 Vector *bw2_do(double w, double h, Vector *p) {
     bw2_initial(w, h);
+
+    for (int i = 0; i < triangles->size; i ++) {
+        Triangle t = *(Triangle*)vector_index(triangles, i);
+        printf("%lf %lf : %lf %lf : %lf %lf\n", t.a.x, t.a.y, t.b.x, t.b.y, t.c.x, t.c.y);
+    }
 
     for (int i = 0; i < p->size; i++) {
         Point q = *(Point*)vector_index(p, i);

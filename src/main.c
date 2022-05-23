@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     Vector *points_v = VECTOR_NEW();
 
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < sizeof(i_points)/sizeof(Point); i++) {
         vector_push(points_v, &i_points[i]);
     }
 
@@ -46,7 +46,8 @@ int main(int argc, char *argv[]) {
 
     // print out points
     for (int i = 0; i < points->size; i++) {
-        printf("%d: %lf, %lf\n", i, ((Point*)vector_index(points, i))->x, ((Point*)vector_index(points, i))->y);
+        Triangle ip = *(Triangle*)vector_index(points, i);
+        printf("%d: %lf, %lf | %lf %lf | %lf %lf\n", i, ip.a.x, ip.a.y, ip.b.x, ip.b.y, ip.c.x, ip.c.y);
     }
 
     // printf("TRIANGLE :: (%lf %lf) (%lf %lf) (%lf %lf)\n", super.a.x, super.a.y, super.b.x, super.b.y, super.c.x, super.c.y);
