@@ -1,4 +1,4 @@
-#include <math.h>
+/* #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -107,23 +107,6 @@ bool is_opposite_angle_btw_non_reflex(double angle, double angle1, double angle2
 
     return (is_angle_btw_non_reflex(o_angle, angle1, angle2));
 }
-
-/* int sqrt_mult[any x, int y] (
-    <- int::(math:sqrt[x] * y) // <- is return, x::(y) is cast
-
-    io:nputs!["Error - failed to return"] // putsn! is a macro on top of puts, which appends a new line at the end of puts. `!` specifies it's a macro
-)
-
-fn fizzbuzz[] (
-    loop[&(int i), 1, 100] ( // Passing a pointer bcz loop is incrementing 
-        io:puts["{i} : "] // String formatting with {}
-
-        ?[!i%3] io:puts["Fizz"] // ? is if, ?? is elif and ??? is else
-        ?[!i%5] io:puts["Buzz"]
-
-        io:puts["\n"]
-     )
-) */
 
 bool is_angle_btw_pred_and_succ(double *angle, double angle_pred, double angle_succ) {
     if (is_angle_btw_non_reflex(angle, angle_pred, angle_succ)) {
@@ -268,7 +251,21 @@ bool is_not_b_tangency(Point *B, int *a, int *b) {
 void update_sides_ba(int n, Point hull[n], Point *A, Point *B, int *a, int *b) {
     *B = hull[*b];
 
-    if (middle_point_of_side_b(middle_point(*A, *B))
+    if (middle_point	public void initial(double w,double h){
+		initpoints=new ArrayList<DPoint>();
+		DPoint a=new DPoint(0,0);
+		DPoint b=new DPoint(0,h);
+		DPoint c=new DPoint(w,h);
+		DPoint d=new DPoint(w,0);
+		DTriangle tri1=new DTriangle(a,b,c);
+		DTriangle tri2=new DTriangle(a,c,d);
+		triangles.add(tri1);
+		triangles.add(tri2);
+		initpoints.add(a);
+		initpoints.add(b);
+		initpoints.add(c);
+		initpoints.add(d);
+	}_of_side_b(middle_point(*A, *B))
             && (h(middle_point(*A, *B)) < h(*a - 1))) {
         *A = find_vertex_c_on_side_b();
 
@@ -354,7 +351,7 @@ Triangle super_triangle(int n, Point hull[n]) {
     }
 }
 
-/*
+
 // Triangle super_triangle(int n, Point hull[n]) {
     Point bmin, bmax;
 

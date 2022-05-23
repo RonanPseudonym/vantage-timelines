@@ -99,10 +99,6 @@ Vector *bowyer_watson(int num_points, Point points[num_points], Triangle striang
 
     //Triangle striangle = super_triangle(pp);
 
-    printf("a %lf %lf\n", striangle.a);
-    printf("b %lf %lf\n", striangle.b);
-    printf("c %lf %lf\n", striangle.c);
-
     vector_push(triangulation, &striangle);
 
     for (int i = 0; i < num_points; i ++) {
@@ -115,8 +111,6 @@ Vector *bowyer_watson(int num_points, Point points[num_points], Triangle striang
                 vector_push(bad_triangles, triangle);
             }
         }
-
-        printf("%d bad triangles\n", bad_triangles->size);
 
         Vector *polygon = VECTOR_NEW();
         for (int j = 0; j < bad_triangles->size; j ++) {

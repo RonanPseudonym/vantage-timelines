@@ -77,9 +77,9 @@ void gfx_main_loop() {
 
     GLfloat* vertices = malloc(sizeof(GLfloat) * 5 * n_points);
     printf(":DDD\n");
-    /* int vertex_counter = 0;
+    int vertex_counter = 0;
 
-    for (int i = 1; i < shapes->size; i ++) {
+    /* for (int i = 1; i < shapes->size; i ++) {
         Polygon *shape = vector_index(shapes, i);
 
         for (int j = 0; j < shape->num_points; j ++) {

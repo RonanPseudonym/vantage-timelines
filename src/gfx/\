@@ -1,0 +1,119 @@
+#include "../utils/vector.h"
+#include "bowyer_watson2.h"
+#include "triangle.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+Vector *triangles;
+Vector *points;
+Vector *initpoints;
+
+bool tri_in_circum(Triangle t, Point p) {
+    
+}
+
+bool compare_points(Point p1, Point p2) {
+    return p1.x == p2.x && p1.y == p2.y;
+}
+
+void bw2_init() {
+    triangles  = VECTOR_NEW();
+    points     = VECTOR_NEW();
+    initpoints = VECTOR_NEW();
+}
+
+void bw2_initial(double w, double h) {
+    Point *a, *b, *c, *d;
+
+    a->x = 0;
+    a->y = 0;
+
+    b->x = w;
+    b->y = 0;
+
+    c->x = w;
+    c->y = h;
+
+    d->x = 0;
+    d->y = h;
+
+    Triangle *t1, *t2;
+
+    t1->a = *a;
+    t1->b = *b;
+    t1->c = *c;
+
+    t2->a = *a;
+    t2->b = *c;
+    t2->c = *d;
+
+    vector_push(triangles, t1);
+    vector_push(triangles, t2);
+
+    vector_push(initpoints, a);
+    vector_push(initpoints, b);
+    vector_push(initpoints, c);
+    vector_push(initpoints, d);
+}
+
+void bw2_run(Point p) {
+    Vector *bads      = VECTOR_NEW();
+    Vector *edges     = VECTOR_NEW();
+    Vector *to_remove = VECTOR_NEW();
+
+    for (int i = triangles->size-1; i>=0; i--) {
+        Triangle *t = vector_index(triangles, i);
+        if (tri_in_circum(*t, p)) {
+            vector_push(bads, t);
+            vector_delete(triangles, i);
+        }
+    }
+
+    for (int i = 0; i < bads->size; i ++) {
+        Triangle *t = vector_index(bads, i);
+
+        Edge *e1, *e2, *e3;
+
+        e1->a = t->a;
+        e1->b = t->b;
+
+        e2->a = t->b;
+        e2->b = t->c;
+
+        e3->a = t->c;
+        e3->b = t->a;
+
+        if (vector_find(edges, e1, compare_points) == -1) {
+            vector_push(edges, e1);
+        } else {
+            vector_push(to_remove, e1);
+        }
+
+        if (vector_find(edges, e2, compare_points) == -1) {
+            vector_push(edges, e2);
+        } else {
+            vector_push(to_remove, e2);
+        }
+
+        if (vector_find(edges, e3, compare_points) == -1) {
+            vector_push(edges, e3);
+        } else {
+            vector_push(to_remove, e3);
+        }
+    }
+
+    for (int i = 0; i < to_remove->size; i++) {
+        Edge *e = (Edge*)vector_index(to_remove, i);
+        vector_delete(edges, vector_find(edges, e, compare_points));
+    }
+}
+
+void bw2_do(double w, double h, Vector *p) {
+    bw2_initial(w, h);
+    for (int i = 0; i < p->size; i++) {
+        Point q = *(Point*)p->data[i];
+        bw2_run(q);
+    }
+}

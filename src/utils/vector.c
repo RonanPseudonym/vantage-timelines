@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "vector.h"
 
@@ -51,4 +52,13 @@ void vector_delete(Vector *v, size_t index) { // Might have to account for resiz
 
 void vector_free(Vector *v) {
     free(v->data);
+}
+
+size_t vector_find(Vector *v, void *item, bool (*compare)(void *, void *)) {
+    for (size_t i = 0; i < v->size; i++) {
+        if ((*compare)(v->data[i], item)) {
+            return i;
+        }
+    }
+    return -1;
 }

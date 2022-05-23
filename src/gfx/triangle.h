@@ -10,11 +10,17 @@
 #endif
 
 typedef struct _Triangle Triangle;
+typedef struct _Edge     Edge;
 
 struct _Triangle {
     Point a;
     Point b;
     Point c;
+};
+
+struct _Edge {
+    Point a;
+    Point b;
 };
 
 #endif
