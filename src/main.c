@@ -12,16 +12,30 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <limits.h>
 
 int main(int argc, char *argv[]) {
-
     // gfx_main_loop();
-    Point i_points[] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}, {0.25, 0.25}, {0.75, 0.75}};
     Vector *points_v = VECTOR_NEW();
 
+    Point p[24];
+    p[0] = (Point){0.0, 0.0};
+    p[1] = (Point){1.0, 0.0};
+    p[2] = (Point){1.0, 1.0};
+    p[3] = (Point){0.0, 1.0};
 
-    for (int i = 0; i < sizeof(i_points)/sizeof(Point); i++) {
-        vector_push(points_v, &i_points[i]);
+    srand(time(NULL));
+
+    int i = 4;
+    while (i < 24) {
+        p[i] = (Point){(double)rand() / INT_MAX, (double)rand() / INT_MAX};
+
+        i ++;
+    }
+
+    for (int i = 0; i < sizeof(p)/sizeof(Point); i++) {
+        vector_push(points_v, &p[i]);
     }
 
 
