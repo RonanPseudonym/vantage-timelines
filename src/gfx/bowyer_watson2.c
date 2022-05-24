@@ -44,8 +44,10 @@ bool tri_in_circum(Triangle t, Point p) {
     return sqrt(x*x+y*y)<r;
 }
 
-bool compare_points(void *p1, void *p2) {
-    return ((Point *)p1)->x == ((Point *)p2)->x && ((Point *)p1)->y == ((Point *)p2)->y;
+bool compare_edges(void *e1, void *e2) {
+    Edge *e = (Edge *)e1;
+    Edge *f = (Edge *)e2;
+    return compare_points(&e->a, &f->a) && compare_points(&e->b, &f->b);
 }
 
 void bw2_init() {
@@ -54,7 +56,7 @@ void bw2_init() {
     initpoints = VECTOR_NEW();
 }
 
-void bw2_initial(double w, double h) {
+void bw2_initial(double w, double h) { // this was made for a square, so it's not super useful rn
     Point a = {0.0, 0.0};
     Point b = {w, 0.0};
     Point c = {w, h};
@@ -74,8 +76,10 @@ void bw2_initial(double w, double h) {
 
 void bw2_run(Point p) {
     Vector *bads      = VECTOR_NEW();
-    Vector *edges     = VECTOR_NEW();
-    Vector *to_remove = VECTOR_NEW();
+    Vector *edges     = VECTOR_NEW(); // This is a set
+    Vector *to_remove = VECTOR_NEW(); // This is a set
+
+    #define SET_ADD(set, pointer, func) if (vector_find(set, pointer, func) == -1) vector_push(set, pointer)
 
     for (int i = triangles->size-1; i>=0; i--) {
         Triangle *t = vector_index(triangles, i);
@@ -101,29 +105,35 @@ void bw2_run(Point p) {
             printf("(%f %f %f %f)\n", e->a.x, e->a.y, e->b.x, e->b.y);
         } */
 
-        if (vector_find(edges, &e1, compare_points) == -1) {
-            vector_push(edges, VAL_TO_POINTER(e1, sizeof(Edge)));
+        if (vector_find(edges, &e1, compare_edges) == -1) {
+            SET_ADD(edges, VAL_TO_POINTER(e1, sizeof(Edge)), compare_edges);
         } else {
-            vector_push(to_remove, VAL_TO_POINTER(e1, sizeof(Edge)));
+            SET_ADD(to_remove, VAL_TO_POINTER(e1, sizeof(Edge)), compare_edges);
         }
 
-        if (vector_find(edges, &e2, compare_points) == -1) {
-            vector_push(edges, VAL_TO_POINTER(e2, sizeof(Edge)));
+        if (vector_find(edges, &e2, compare_edges) == -1) {
+            SET_ADD(edges, VAL_TO_POINTER(e2, sizeof(Edge)), compare_edges);
         } else {
-            vector_push(to_remove, VAL_TO_POINTER(e2, sizeof(Edge)));
+            SET_ADD(to_remove, VAL_TO_POINTER(e2, sizeof(Edge)), compare_edges);
         }
 
-        if (vector_find(edges, &e3, compare_points) == -1) {
-            vector_push(edges, VAL_TO_POINTER(e3, sizeof(Edge)));
+        if (vector_find(edges, &e3, compare_edges) == -1) {
+            SET_ADD(edges, VAL_TO_POINTER(e3, sizeof(Edge)), compare_edges);
         } else {
-            vector_push(to_remove, VAL_TO_POINTER(e3, sizeof(Edge)));
+            SET_ADD(to_remove, VAL_TO_POINTER(e3, sizeof(Edge)), compare_edges);
         }
     }
 
     for (int i = 0; i < to_remove->size; i++) { // The problem causing the segfault is that sizeof(to_remove) == sizeof(edges), so it's deleting shit all the way down to -1. this is an issue with items being pushed to to_remove.
         Edge *e = (Edge*)vector_index(to_remove, i);
-        vector_delete(edges, vector_find(edges, e, compare_points));
-        // vector_delete(to_remove, i); // added this off the cuff, might not work but sure stops segfault
+        /* printf("===== VECTORS =====\n(%f %f %f %f)\n", e->a.x, e->a.y, e->b.x, e->b.y);
+        printf("%d\n", vector_find(edges, e, compare_edges));
+        for (int j = 0; j < edges->size; j++) {
+            Edge *e2 = (Edge*)vector_index(edges, j);
+            printf("%d (%f %f %f %f)\n", i, e2->a.x, e2->a.y, e2->b.x, e2->b.y);
+        }
+        printf("\n"); */
+        vector_delete(edges, vector_find(edges, e, compare_edges));
     }
 
     for (int i = 0; i < edges->size; i++) {
@@ -136,10 +146,10 @@ void bw2_run(Point p) {
 Vector *bw2_do(double w, double h, Vector *p) {
     bw2_initial(w, h);
 
-    for (int i = 0; i < triangles->size; i ++) {
+    /* for (int i = 0; i < triangles->size; i ++) {
         Triangle t = *(Triangle*)vector_index(triangles, i);
         printf("%lf %lf : %lf %lf : %lf %lf\n", t.a.x, t.a.y, t.b.x, t.b.y, t.c.x, t.c.y);
-    }
+    } */
 
     for (int i = 0; i < p->size; i++) {
         Point q = *(Point*)vector_index(p, i);

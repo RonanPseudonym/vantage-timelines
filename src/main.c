@@ -16,8 +16,7 @@
 int main(int argc, char *argv[]) {
 
     // gfx_main_loop();
-    Point i_points[] = {{0, 3}, {1, 1}, {2, 2}, {4, 4},
-{0, 0}, {1, 2}, {3, 1}, {3, 3}};
+    Point i_points[] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}, {0.25, 0.25}, {0.75, 0.75}};
     Vector *points_v = VECTOR_NEW();
 
 
@@ -42,13 +41,9 @@ int main(int argc, char *argv[]) {
 
     bw2_init();
 
-    Vector *points = bw2_do(4.0, 4.0, points_v);
+    Vector *points = bw2_do(1.0, 1.0, points_v);
 
-    // print out points
-    for (int i = 0; i < points->size; i++) {
-        Triangle ip = *(Triangle*)vector_index(points, i);
-        printf("%d: %lf, %lf | %lf %lf | %lf %lf\n", i, ip.a.x, ip.a.y, ip.b.x, ip.b.y, ip.c.x, ip.c.y);
-    }
+    gfx_main_loop(points);
 
     // printf("TRIANGLE :: (%lf %lf) (%lf %lf) (%lf %lf)\n", super.a.x, super.a.y, super.b.x, super.b.y, super.c.x, super.c.y);
 }

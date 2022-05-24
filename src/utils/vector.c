@@ -56,7 +56,7 @@ void vector_free(Vector *v) {
 
 size_t vector_find(Vector *v, void *item, bool (*compare)(void *, void *)) {
     for (size_t i = 0; i < v->size; i++) {
-        if ((*compare)(v->data[i], item)) {
+        if (compare(v->data[i], item)) {
             return i;
         }
     }

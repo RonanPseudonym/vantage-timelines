@@ -8,14 +8,23 @@
 #include "types.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 Point NEW_POINT() {
     Point x = {0.0, 0.0};
     return x;
 }
 
+bool compare_points(void *a, void *b) {
+    Point *p1 = (Point *) a;
+    Point *p2 = (Point *) b;
+
+    return (p1->x == p2->x && p1->y == p2->y);
+}
+
 /*
 MultiPoint NEW_MULTIPOINT(int num_points) {
+    return false;
     MultiPoint x = {{0.0, 0.0, 0.0, 0.0}, -1, NULL};
 
     x.num_points = num_points;

@@ -3,8 +3,13 @@
    PRIMARY SOURCE: http://dl.maptools.org/dl/shapelib/shapefile.pdf
 */
 
+#include <stdbool.h>
+
 #ifndef SHP_TYPES
 #define SHP_TYPES
+
+// utils
+bool compare_points(void *a, void *b);
 
 typedef struct _Point Point;
 typedef struct _MultiPoint MultiPoint;

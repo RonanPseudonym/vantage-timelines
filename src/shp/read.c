@@ -101,8 +101,8 @@ Vector *shp_read(char* dir) {
         if (byte_counter == 100) {
             printf("\n");
             printf("Header:\n");
-            printf("  File length: %d\n", header.file_length);
-            printf("  Shape type: %d\n", header.shape_type);
+            printf("  File length:        %d\n", header.file_length);
+            printf("  Shape type:         %d\n", header.shape_type);
             printf("  Bounding box x_min: %lf\n", header.x_min);
             printf("  Bounding box y_min: %lf\n", header.y_min);
             printf("  Bounding box x_max: %lf\n", header.x_max);
