@@ -154,6 +154,7 @@ Vector *bw2_do(double w, double h, Vector *p) {
     for (int i = 0; i < p->size; i++) {
         Point q = *(Point*)vector_index(p, i);
         bw2_run(q);
+        printf("[%lf%] : %d / %d\n", (double)i / p->size * 100, i, p->size);
     }
 
     return triangles;

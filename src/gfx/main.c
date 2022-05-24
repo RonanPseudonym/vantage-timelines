@@ -31,7 +31,7 @@ const char* fragmentSource = "\
         outColor = vec4(Color, 1.0);\
     }";
 
-void gfx_main_loop(Vector *triangles) {
+void gfx_main_loop(Vector *triangles, Vector *shapes, double width, double height, int ignore_edge_artifacts, int fill) {
     GLFWwindow* window; // = NULL ???
 
     if ( !glfwInit() ) {
@@ -69,8 +69,6 @@ void gfx_main_loop(Vector *triangles) {
     int n_parts  = 0;
     int n_points = 0;
 
-    Vector *shapes = shp_read("data/2022");
-
     for (int i = 0; i < shapes->size; i ++) {
         Polygon *shape = vector_index(shapes, i);
 
@@ -96,6 +94,8 @@ void gfx_main_loop(Vector *triangles) {
                 case 2: vertex = t->c; break;
             }
 
+            if ((ignore_edge_artifacts) && (vertex.x == 0 || vertex.x == width || vertex.y == 0 || vertex.y == width)) break;
+
             int vindex = vector_find(vvertices, &vertex, compare_points);
 
             if (vindex == -1) {
@@ -111,8 +111,8 @@ void gfx_main_loop(Vector *triangles) {
 
     for (int i = 0; i < vvertices->size; i ++) {
         Point *c = vector_index(vvertices, i); // might be a cast mismatch with double != glfloat, but it's fine now
-        vertices[i * 5    ] = c->x - 0.5;
-        vertices[i * 5 + 1] = c->y - 0.5;
+        vertices[i * 5    ] = (c->x - (width / 2 )) / 10;
+        vertices[i * 5 + 1] = (c->y - (height / 2)) / 10;
         vertices[i * 5 + 2] = 1   * ((i + 0) % 3) / 2;
         vertices[i * 5 + 3] = 1   * ((i + 1) % 3) / 2;
         vertices[i * 5 + 4] = 1   * ((i + 2) % 3) / 2;
@@ -207,7 +207,7 @@ void gfx_main_loop(Vector *triangles) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        if (!fill) glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
         // Draw a rectangle from the 2 triangles using 6 indices
         glDrawElements(GL_TRIANGLES, sizeof(elements) / sizeof(GLuint), GL_UNSIGNED_INT, 0);
